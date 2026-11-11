@@ -108,6 +108,11 @@
         "value": 0
       },
       "minecraft:can_climb": {},
+      "minecraft:variable_max_auto_step": {
+        "base_value": 1.0625,
+        "controlled_value": 1.0625,
+        "jump_prevented_value": 1.0625
+      },
       "minecraft:behavior.float": {
         "priority": 0
       },

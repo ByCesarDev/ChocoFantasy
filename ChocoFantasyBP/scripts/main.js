@@ -6,7 +6,7 @@ import { world, system, InputButton, ButtonState } from "@minecraft/server";
 const CHOCOBO_IDENTIFIER = "cf:chocobo_yellow_1";
 
 // Velocidades horizontales (XZ)
-const CRUISE_HORIZONTAL_SPEED = 1.80;   // Velocidad crucero en el aire (WASD normal, duplicada)
+const CRUISE_HORIZONTAL_SPEED = 1.25;   // Velocidad crucero en el aire (WASD normal, equilibrada y controlable)
 const SPRINT_HORIZONTAL_SPEED = 2.80;   // Velocidad con sprint / acelerón aéreo (Doble toque a W)
 
 // Velocidades de ascenso (Y positivo)
@@ -70,7 +70,10 @@ system.runInterval(() => {
 
 // ==========================================
 // GESTIÓN DE EVENTOS DE ENTRADA (BOTÓN SALTO)
+// Máquina de estados: ASCENDING / HOVERING / DESCENDING
 // ==========================================
+const TAP_TICK_THRESHOLD = 7; // Umbral de ticks (~350ms) para distinguir Toque Corto (Tap) de Mantener
+
 world.afterEvents.playerButtonInput.subscribe((event) => {
     const { player, button, newButtonState } = event;
 
@@ -81,43 +84,61 @@ world.afterEvents.playerButtonInput.subscribe((event) => {
         const mount = riding?.entityRidingOn;
 
         const isPressed = newButtonState === ButtonState.Pressed;
-        console.warn(`[ChocoDebug] Boton SALTO: ${isPressed ? "PRESIONADO" : "LIBERADO"}`);
 
-        if (!mount) {
-            console.warn(`[ChocoDebug] Salto detectado pero NO esta montando ninguna entidad.`);
-            return;
-        }
+        if (!mount) return;
 
-        const isTamed = mount.hasComponent("minecraft:is_tamed");
-        const isSaddled = mount.hasComponent("minecraft:is_saddled");
-        const canPowerJump = mount.hasComponent("minecraft:can_power_jump");
         const flyable = canFly(mount);
+        if (!flyable) return;
 
-        console.warn(`[ChocoDebug] Montura: ${mount.typeId} | Tamed: ${isTamed} | Saddled: ${isSaddled} | PowerJump: ${canPowerJump} | canFly: ${flyable}`);
-
-        if (!flyable) {
-            let razon = "";
-            if (!isTamed) razon += "NO esta domesticado. ";
-            if (!isSaddled) razon += "NO tiene silla puesta. ";
-            console.warn(`[ChocoDebug] Vuelo denegado: ${razon}`);
-            return;
-        }
+        let flightData = flightStates.get(mount.id);
+        const currentTick = system.currentTick;
 
         if (isPressed) {
-            // Iniciar o reanudar ascenso en el aire
-            const current = flightStates.get(mount.id);
-            flightStates.set(mount.id, {
-                state: "ASCENDING",
-                hasLeftGround: current ? current.hasLeftGround : false
-            });
-            console.warn(`[ChocoDebug] Disparando cf:chocobo_start_flying (ASCENDING)`);
+            // Registrar momento de pulsación para medir si fue un tap o si se mantiene
+            if (!flightData) {
+                flightData = {
+                    state: "ASCENDING",
+                    hasLeftGround: false,
+                    jumpPressTick: currentTick,
+                    prevStateBeforePress: "GROUND"
+                };
+                flightStates.set(mount.id, flightData);
+            } else {
+                flightData.prevStateBeforePress = flightData.state;
+                flightData.jumpPressTick = currentTick;
+                flightData.state = "ASCENDING";
+                flightData.hoverY = undefined; // Descongelar altura al subir
+            }
+
+            console.warn(`[ChocoDebug] Boton SALTO: PRESIONADO -> ASCENDING`);
             mount.triggerEvent("cf:chocobo_start_flying");
         } else {
-            // Liberar salto NO aterriza el Chocobo: entra en modo descenso manteniendo control aéreo
-            const current = flightStates.get(mount.id);
-            if (current) {
-                current.state = "DESCENDING";
-                console.warn(`[ChocoDebug] Disparando cf:chocobo_start_descending (DESCENDING)`);
+            // Botón Salto LIBERADO: Evaluar si fue un Toque Corto (Tap) o Salto Mantenido
+            if (!flightData) return;
+
+            const pressDuration = currentTick - (flightData.jumpPressTick ?? currentTick);
+            const wasTap = pressDuration <= TAP_TICK_THRESHOLD;
+
+            if (wasTap) {
+                // TOQUE CORTO (TAP): Conmuta entre HOVERING (Suspensión estática) y DESCENDING
+                if (flightData.prevStateBeforePress === "HOVERING") {
+                    // Si ya estaba en suspensión -> Un toque reanuda el descenso
+                    flightData.state = "DESCENDING";
+                    flightData.hoverY = undefined;
+                    console.warn(`[ChocoDebug] [Tap] Suspensión DESACTIVADA -> Modo Descenso/Planeo`);
+                    mount.triggerEvent("cf:chocobo_start_descending");
+                } else {
+                    // Si estaba descendiendo o en otra maniobra -> Un toque activa SUSPENSIÓN ESTÁTICA
+                    flightData.state = "HOVERING";
+                    flightData.hoverY = mount.location.y;
+                    console.warn(`[ChocoDebug] [Tap] ¡Modo Suspensión ACTIVADO! Altitud Y congelada en: ${flightData.hoverY.toFixed(1)}`);
+                    mount.triggerEvent("cf:chocobo_start_flying"); // Sin gravedad vanilla para flotar limpio
+                }
+            } else {
+                // SALTO MANTENIDO Y SOLTADO: Transición normal a descenso
+                flightData.state = "DESCENDING";
+                flightData.hoverY = undefined;
+                console.warn(`[ChocoDebug] Salto mantenido liberado (${pressDuration} ticks) -> Modo Descenso/Planeo`);
                 mount.triggerEvent("cf:chocobo_start_descending");
             }
         }
@@ -243,19 +264,28 @@ system.runInterval(() => {
                     horizontalSpeed += diveBoost;
                 }
 
-                targetVx = dirX * horizontalSpeed;
-                targetVz = dirZ * horizontalSpeed;
-
-                // Logs dinámicos para Caso 2 (Crucero vs Sprint)
-                const hMode = isSprinting ? "SPRINT_AIR" : "CRUISE_AIR";
-                if (flightData.lastHMode !== hMode) {
-                    flightData.lastHMode = hMode;
-                    if (isSprinting) {
-                        console.warn(`[ChocoDebug] [Caso 2] Propulsión: Sprint Aéreo activado (Doble W) (Velocidad: ${SPRINT_HORIZONTAL_SPEED})`);
-                    } else {
-                        console.warn(`[ChocoDebug] [Caso 2] Propulsión: Vuelo Crucero (Velocidad: ${CRUISE_HORIZONTAL_SPEED})`);
+                // Freno Aéreo Activo si se presiona S (retroceso en vuelo)
+                if (moveVec.y < -0.3) {
+                    horizontalSpeed = 0.35;
+                    if (flightData.lastHMode !== "AIR_BRAKE") {
+                        flightData.lastHMode = "AIR_BRAKE";
+                        console.warn(`[ChocoDebug] [Freno] Freno Aéreo Activo (Tecla S)`);
+                    }
+                } else {
+                    // Logs dinámicos para Caso 2 (Crucero vs Sprint)
+                    const hMode = isSprinting ? "SPRINT_AIR" : "CRUISE_AIR";
+                    if (flightData.lastHMode !== hMode) {
+                        flightData.lastHMode = hMode;
+                        if (isSprinting) {
+                            console.warn(`[ChocoDebug] [Caso 2] Propulsión: Sprint Aéreo activado (Doble W) (Velocidad: ${SPRINT_HORIZONTAL_SPEED})`);
+                        } else {
+                            console.warn(`[ChocoDebug] [Caso 2] Propulsión: Vuelo Crucero (Velocidad: ${CRUISE_HORIZONTAL_SPEED})`);
+                        }
                     }
                 }
+
+                targetVx = dirX * horizontalSpeed;
+                targetVz = dirZ * horizontalSpeed;
 
                 // Orientar cuerpo del Chocobo al Yaw del jugador
                 mount.setRotation({ x: 0, y: yaw });
@@ -267,11 +297,14 @@ system.runInterval(() => {
 
             // Movimiento vertical dinámico:
             // 1. ASCENDING (manteniendo Space):
-            //    - Normal: NORMAL_ASCENT_SPEED (0.50)
-            //    - Con Sprint: SPRINT_ASCENT_SPEED (0.65)
-            // 2. DESCENDING (al soltar Space):
-            //    - Mirando al frente/arriba (pitch <= 20°): Planeo suave prolongado (GLIDE_DESCENT_SPEED = -0.08)
-            //    - Mirando hacia abajo (pitch > 20°): Picado rápido proporcional al ángulo (hasta DIVE_DESCENT_SPEED = -0.50)
+            //    - Normal: NORMAL_ASCENT_SPEED (0.85)
+            //    - Con Sprint: SPRINT_ASCENT_SPEED (1.30)
+            // 2. HOVERING (activado por Toque Corto / Tap a Space):
+            //    - Ancla la altitud Y exacta, permitiendo vuelo horizontal puro en XZ sin perder ni ganar altura.
+            // 3. DESCENDING (al soltar Space tras mantenerlo):
+            //    - Mirando al frente/arriba (pitch <= 20°): Planeo suave prolongado (GLIDE_DESCENT_SPEED = -0.05)
+            //    - Mirando hacia abajo (pitch > 20°): Picado rápido proporcional al ángulo (hasta DIVE_DESCENT_SPEED = -1.20)
+            //    - Mirando al suelo vertical (pitch > 60°): ¡Super Picado Extremo (-1.60)!
             let targetVy;
             if (flightData.state === "ASCENDING") {
                 targetVy = isSprinting ? SPRINT_ASCENT_SPEED : NORMAL_ASCENT_SPEED;
@@ -285,19 +318,39 @@ system.runInterval(() => {
                         console.warn(`[ChocoDebug] [Caso 1] Ascenso Normal [Vy: +${NORMAL_ASCENT_SPEED}]`);
                     }
                 }
+            } else if (flightData.state === "HOVERING") {
+                // Modo Suspensión Estática: Anclar altitud Y exactamente
+                if (flightData.hoverY === undefined) {
+                    flightData.hoverY = mount.location.y;
+                }
+                const diffY = flightData.hoverY - mount.location.y;
+                if (Math.abs(diffY) > 0.05) {
+                    targetVy = Math.max(Math.min(diffY * 0.4, 0.25), -0.25);
+                } else {
+                    targetVy = 0;
+                }
+
+                if (flightData.lastVMode !== "HOVER") {
+                    flightData.lastVMode = "HOVER";
+                    console.warn(`[ChocoDebug] [Hover] Modo Suspensión activo: Altitud Y fija en ${flightData.hoverY.toFixed(1)}`);
+                }
             } else {
                 let targetDescent = GLIDE_DESCENT_SPEED;
                 const isDiving = pitch > 20;
 
                 if (isDiving) {
+                    const isSuperDive = pitch > 60;
+                    const maxDive = isSuperDive ? -1.60 : DIVE_DESCENT_SPEED;
                     const diveFactor = Math.min((pitch - 20) / 45, 1);
-                    targetDescent = GLIDE_DESCENT_SPEED + (DIVE_DESCENT_SPEED - GLIDE_DESCENT_SPEED) * diveFactor;
+                    targetDescent = GLIDE_DESCENT_SPEED + (maxDive - GLIDE_DESCENT_SPEED) * diveFactor;
                 }
 
-                const vMode = isDiving ? "DIVE" : "GLIDE";
+                const vMode = isDiving ? (pitch > 60 ? "SUPER_DIVE" : "DIVE") : "GLIDE";
                 if (flightData.lastVMode !== vMode) {
                     flightData.lastVMode = vMode;
-                    if (isDiving) {
+                    if (pitch > 60) {
+                        console.warn(`[ChocoDebug] [Caso 4] ¡SUPER PICADO EXTREMO! [Pitch: ${pitch.toFixed(1)}° -> Vy obj: ${targetDescent.toFixed(2)}]`);
+                    } else if (isDiving) {
                         console.warn(`[ChocoDebug] [Caso 4] Picado Rápido (Dive) [Pitch: ${pitch.toFixed(1)}° -> Vy obj: ${targetDescent.toFixed(2)}]`);
                     } else {
                         console.warn(`[ChocoDebug] [Caso 3] Planeo Suave / Sustentación [Vy: ${GLIDE_DESCENT_SPEED} | Pitch: ${pitch.toFixed(1)}°]`);
