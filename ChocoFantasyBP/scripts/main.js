@@ -6,6 +6,8 @@ import { world, system, InputButton, ButtonState } from "@minecraft/server";
 const CHOCOBO_IDENTIFIER = "cf:chocobo_yellow_1";
 const HORIZONTAL_SPEED = 0.40;   // Velocidad horizontal en el aire (bloques/tick aprox.)
 const ASCENT_SPEED = 0.30;       // Velocidad de ascenso vertical constante
+const DESCENT_SPEED = -0.20;      // Velocidad máxima de planeo/descenso
+const GRAVITY_DECEL = 0.03;      // Desaceleración vertical al soltar Space
 const INERTIA_DAMPING = 0.85;    // Factor de amortiguación cuando no hay input de WASD
 
 // ==========================================
@@ -218,12 +220,12 @@ system.runInterval(() => {
 
             // Movimiento vertical:
             // - ASCENDING: velocidad constante de ascenso (sin acumulación)
-            // - DESCENDING: gravedad natural de la entidad (cf:chocobo_descend)
+            // - DESCENDING: transición suave hacia descenso controlado/planeo
             let targetVy;
             if (flightData.state === "ASCENDING") {
                 targetVy = ASCENT_SPEED;
             } else {
-                targetVy = currentVel.y;
+                targetVy = Math.max(currentVel.y - GRAVITY_DECEL, DESCENT_SPEED);
             }
 
             mount.clearVelocity();
