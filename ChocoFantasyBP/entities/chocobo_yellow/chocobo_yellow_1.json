@@ -164,13 +164,7 @@
           "has_gravity": false,
           "has_collision": true
         },
-        "minecraft:flying_speed": {
-          "value": 0.15
-        },
-        "minecraft:input_air_controlled": {
-          "strafe_speed_modifier": 1,
-          "backwards_movement_modifier": 0.5
-        },
+        "minecraft:input_ground_controlled": {},
         "minecraft:vertical_movement_action": {
           "vertical_velocity": 0.3
         }

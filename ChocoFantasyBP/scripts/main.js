@@ -3,17 +3,16 @@ import { world, InputButton, ButtonState } from "@minecraft/server";
 world.afterEvents.playerButtonInput.subscribe((event) => {
     const { player, button, newButtonState } = event;
 
-    // Solo nos interesa cuando se presiona saltar.
-    if (button !== InputButton.Jump || newButtonState !== ButtonState.Pressed) return;
+    if (button !== InputButton.Jump) return;
 
-    // Comprobar si el jugador está montando algo.
     const riding = player.getComponent("minecraft:riding");
-    if (!riding) return;
-
-    const mount = riding.entityRidingOn;
+    const mount = riding?.entityRidingOn;
     if (!mount || mount.typeId !== "cf:chocobo_yellow_1") return;
 
-    // Activar el vuelo.
-    mount.triggerEvent("cf:chocobo_start_flying");
+    if (newButtonState === ButtonState.Pressed) {
+        mount.triggerEvent("cf:chocobo_start_flying");
+    } else if (newButtonState === ButtonState.Released) {
+        mount.triggerEvent("cf:chocobo_stop_flying");
+    }
 });
 
