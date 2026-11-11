@@ -157,11 +157,18 @@
           "has_gravity": true,
           "has_collision": true
         },
-        "minecraft:input_ground_controlled": {}
+        "minecraft:input_ground_controlled": {},
+        "minecraft:behavior.player_ride_tamed": {}
       },
       "cf:chocobo_air": {
         "minecraft:physics": {
           "has_gravity": false,
+          "has_collision": true
+        }
+      },
+      "cf:chocobo_descend": {
+        "minecraft:physics": {
+          "has_gravity": true,
           "has_collision": true
         }
       },
@@ -243,8 +250,7 @@
         "minecraft:nameable": {}
       },
       "minecraft:chocobo_saddled": {
-        "minecraft:is_saddled": {},
-        "minecraft:behavior.player_ride_tamed": {}
+        "minecraft:is_saddled": {}
       }
     },
     "events": {
@@ -279,7 +285,9 @@
         "remove": {
           "component_groups": [
             "minecraft:chocobo_saddled",
-            "cf:chocobo_ground"
+            "cf:chocobo_ground",
+            "cf:chocobo_air",
+            "cf:chocobo_descend"
           ]
         }
       },
@@ -298,7 +306,8 @@
         },
         "remove": {
           "component_groups": [
-            "cf:chocobo_air"
+            "cf:chocobo_air",
+            "cf:chocobo_descend"
           ]
         }
       },
@@ -310,7 +319,8 @@
         },
         "remove": {
           "component_groups": [
-            "cf:chocobo_air"
+            "cf:chocobo_air",
+            "cf:chocobo_descend"
           ]
         }
       },
@@ -322,6 +332,20 @@
         },
         "remove": {
           "component_groups": [
+            "cf:chocobo_ground",
+            "cf:chocobo_descend"
+          ]
+        }
+      },
+      "cf:chocobo_start_descending": {
+        "add": {
+          "component_groups": [
+            "cf:chocobo_descend"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "cf:chocobo_air",
             "cf:chocobo_ground"
           ]
         }
@@ -334,7 +358,8 @@
         },
         "remove": {
           "component_groups": [
-            "cf:chocobo_air"
+            "cf:chocobo_air",
+            "cf:chocobo_descend"
           ]
         }
       },
