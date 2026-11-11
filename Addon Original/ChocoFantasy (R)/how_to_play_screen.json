@@ -1,0 +1,1649 @@
+{
+	"namespace": "how_to_play",
+	"how_to_play_screen@how_to_play_common.screen_base": {
+		"$selector_stack_panel": "how_to_play.selector_stack_panel",
+		"$section_content_panels": "how_to_play.section_content_panels"
+	},
+	"selector_stack_panel": {
+		"type": "stack_panel",
+		"anchor_from": "top_left",
+		"anchor_to": "top_left",
+		"orientation": "vertical",
+		"$default_selector_toggle_index": 2,
+		"controls": [
+			{
+				"how_to_play_selector_pane": {
+					"type": "stack_panel",
+					"controls": [
+						{
+							"padding_0": {
+								"type": "panel",
+								"size": [
+									0,
+									6
+								]
+							}
+						},
+						{
+							"credits_category@how_to_play_common.topic_category": {
+								"$category": "credits"
+							}
+						},
+						{
+							"keyyard_button@how_to_play.keyyard_button": {
+								"$toggle_group_forced_index": 1
+							}
+						},
+						{
+							"ender_button@how_to_play.ender_button": {
+								"$toggle_group_forced_index": 2
+							}
+						},
+						{
+							"azoz_button@how_to_play.azoz_button": {
+								"$toggle_group_forced_index": 3
+							}
+						},
+						{
+							"entities_category@how_to_play_common.topic_category": {
+								"$category": "entities"
+							}
+						},
+						{
+							"pistol_button@how_to_play.pistol_button": {
+								"$toggle_group_forced_index": 4
+							}
+						},
+						{
+							"shotgun_button@how_to_play.shotgun_button": {
+								"$toggle_group_forced_index": 5
+							}
+						},
+						{
+							"smg_button@how_to_play.smg_button": {
+								"$toggle_group_forced_index": 6
+							}
+						},
+						{
+							"rifle_button@how_to_play.rifle_button": {
+								"$toggle_group_forced_index": 7
+							}
+						},
+						{
+							"sniper_button@how_to_play.sniper_button": {
+								"$toggle_group_forced_index": 8
+							}
+						},
+						{
+							"other_button@how_to_play.other_button": {
+								"$toggle_group_forced_index": 9
+							}
+						},
+						{
+							"etc_button@how_to_play.etc_button": {
+								"$toggle_group_forced_index": 10
+							}
+						},
+						{
+							"melee_button@how_to_play.melee_button": {
+								"$toggle_group_forced_index": 11
+							}
+						}
+					]
+				}
+			}
+		]
+	},
+	"section_content_panels": {
+		"type": "stack_panel",
+		"anchor_from": "top_left",
+		"anchor_to": "top_left",
+		"size": [
+			"100% - 5px",
+			"100%c + 5px"
+		],
+		"offset": [
+			2,
+			0
+		],
+		"controls": [
+			{
+				"general_tips_sections": {
+					"type": "stack_panel",
+					"controls": [
+						{
+							"section_contents_header@how_to_play_common.section_contents_header": {}
+						},
+						{
+							"keyyard_section@how_to_play.keyyard_section": {}
+						},
+						{
+							"ender_section@how_to_play.ender_section": {}
+						},
+						{
+							"azoz_section@how_to_play.azoz_section": {}
+						},
+						{
+							"pistol_section@how_to_play.pistol_section": {}
+						},
+						{
+							"shotgun_section@how_to_play.shotgun_section": {}
+						},
+						{
+							"smg_section@how_to_play.smg_section": {}
+						},
+						{
+							"rifle_section@how_to_play.rifle_section": {}
+						},
+						{
+							"sniper_section@how_to_play.sniper_section": {}
+						},
+						{
+							"other_section@how_to_play.other_section": {}
+						},
+						{
+							"etc_section@how_to_play.etc_section": {}
+						},
+						{
+							"melee_section@how_to_play.melee_section": {}
+						}
+					]
+				}
+			}
+		]
+	},
+	"keyyard_button@how_to_play_common.section_toggle_button": {
+		"$section_topic": "keyyard"
+	},
+	"keyyard_section@how_to_play_common.main_sections": {
+		"bindings": [
+			{
+				"binding_type": "view",
+				"source_control_name": "keyyard_button_toggle",
+				"source_property_name": "#toggle_state",
+				"target_property_name": "#visible"
+			}
+		],
+		"controls": [
+			{
+				"header_1@how_to_play_common.header": {
+					"$text": "§bKeyyard"
+				}
+			},
+			{
+				"image_1@how_to_play_common.image": {
+					"texture": "textures/ui/keyyard",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_1@how_to_play_common.paragraph": {
+					"$text": "a Minecraft Bedrock Engine Addon Creator, member of §dPixel One Up. \n§bTwitter: @keyyard"
+				}
+			},
+			{
+				"padding_1@how_to_play_common.padding": {}
+			},
+			{
+				"header_2@how_to_play_common.header": {
+					"$text": "§bSome of My Creations"
+				}
+			},
+			{
+				"image_2@how_to_play_common.image": {
+					"texture": "textures/ui/keyyard2",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"image_3ss@how_to_play_common.image": {
+					"texture": "textures/ui/keyyard3",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"image_4@how_to_play_common.image": {
+					"texture": "textures/ui/keyyard4",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			}
+		]
+	},
+	"ender_button@how_to_play_common.section_toggle_button": {
+		"$section_topic": "ender"
+	},
+	"ender_section@how_to_play_common.main_sections": {
+		"bindings": [
+			{
+				"binding_type": "view",
+				"source_control_name": "ender_button_toggle",
+				"source_property_name": "#toggle_state",
+				"target_property_name": "#visible"
+			}
+		],
+		"controls": [
+			{
+				"header_3@how_to_play_common.header": {
+					"$text": "§dTheEnderface"
+				}
+			},
+			{
+				"image_5@how_to_play_common.image": {
+					"texture": "textures/ui/ender",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_2@how_to_play_common.paragraph": {
+					"$text": "A Minecraft Bedrock Engine Addon Creator, Map Creator, And Animator Student. \n§bTwitter: @TheEnderface"
+				}
+			},
+			{
+				"padding_2@how_to_play_common.padding": {}
+			},
+			{
+				"header_4@how_to_play_common.header": {
+					"$text": "§bSome of My Creations"
+				}
+			},
+			{
+				"image_6@how_to_play_common.image": {
+					"texture": "textures/ui/ender2",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"image_7@how_to_play_common.image": {
+					"texture": "textures/ui/ender3",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"image_8@how_to_play_common.image": {
+					"texture": "textures/ui/ender4",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			}
+		]
+	},
+	"azoz_button@how_to_play_common.section_toggle_button": {
+		"$section_topic": "azoz"
+	},
+	"azoz_section@how_to_play_common.main_sections": {
+		"bindings": [
+			{
+				"binding_type": "view",
+				"source_control_name": "azoz_button_toggle",
+				"source_property_name": "#toggle_state",
+				"target_property_name": "#visible"
+			}
+		],
+		"controls": [
+			{
+				"header_5@how_to_play_common.header": {
+					"$text": "§4AzozGamer936"
+				}
+			},
+			{
+				"image_9@how_to_play_common.image": {
+					"texture": "textures/ui/azoz",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_3@how_to_play_common.paragraph": {
+					"$text": "A Minecraft Bedrock Engine Contents Creator. Specialises in Counter-Strike themed maps. \n§bTwitter: @AzozDaGamer"
+				}
+			},
+			{
+				"padding_3@how_to_play_common.padding": {}
+			},
+			{
+				"header_6@how_to_play_common.header": {
+					"$text": "§bSome of My Creations"
+				}
+			},
+			{
+				"image_10@how_to_play_common.image": {
+					"texture": "textures/ui/azoz2",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"image_11@how_to_play_common.image": {
+					"texture": "textures/ui/azoz3",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"image_12@how_to_play_common.image": {
+					"texture": "textures/ui/azoz4",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			}
+		]
+	},
+	"pistol_button@how_to_play_common.section_toggle_button": {
+		"$section_topic": "pistol"
+	},
+	"shotgun_button@how_to_play_common.section_toggle_button": {
+		"$section_topic": "shotgun"
+	},
+	"smg_button@how_to_play_common.section_toggle_button": {
+		"$section_topic": "smg"
+	},
+	"rifle_button@how_to_play_common.section_toggle_button": {
+		"$section_topic": "rifle"
+	},
+	"sniper_button@how_to_play_common.section_toggle_button": {
+		"$section_topic": "sniper"
+	},
+	"other_button@how_to_play_common.section_toggle_button": {
+		"$section_topic": "other"
+	},
+	"melee_button@how_to_play_common.section_toggle_button": {
+		"$section_topic": "melee"
+	},
+	"etc_button@how_to_play_common.section_toggle_button": {
+		"$section_topic": "etc"
+	},
+	"pistol_section@how_to_play_common.main_sections": {
+		"bindings": [
+			{
+				"binding_type": "view",
+				"source_control_name": "pistol_button_toggle",
+				"source_property_name": "#toggle_state",
+				"target_property_name": "#visible"
+			}
+		],
+		"controls": [
+			{
+				"header_ss7@how_to_play_common.header": {
+					"$text": "Magnum"
+				}
+			},
+			{
+				"image_ss13@how_to_play_common.image": {
+					"texture": "textures/guns/magnum",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_ssss4@how_to_play_common.paragraph": {
+					"$text": "A pistol that looked like a wild west revolver before, but now it is really a magnum, and it even acts like one! to fire, keep holding until you shoot. If you stop holding, the gun won't shoot. Think of this gun as the R8 Revolver."
+				}
+			},
+			{
+				"header_bs7@how_to_play_common.header": {
+					"$text": "Glock-18"
+				}
+			},
+			{
+				"image_bs13@how_to_play_common.image": {
+					"texture": "textures/guns/glock",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_sb4@how_to_play_common.paragraph": {
+					"$text": "Glock-18 does 2-4 damage, even though you may see that as a disadvantage, it's accuracy and ammo capacity is very generous in tough situations."
+				}
+			},
+			{
+				"header_b7@how_to_play_common.header": {
+					"$text": "Deagle"
+				}
+			},
+			{
+				"imagsse_b13@how_to_play_common.image": {
+					"texture": "textures/guns/deagle",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_bsss4@how_to_play_common.paragraph": {
+					"$text": "The Desert Eagle is a semi-automatic handgun notable for chambering the largest centerfire cartridge of any magazine-fed, self-loading pistol. It has 7 bullets and it does 16 damage. It is so powerful that it can shatter glass and glass panes!"
+				}
+			},
+			{
+				"padding_bsqqs4@how_to_play_common.padding": {}
+			},
+			{
+				"header_b7@how_to_play_common.header": {
+					"$text": "Deagle Gold Edition"
+				}
+			},
+			{
+				"imagsse_b13@how_to_play_common.image": {
+					"texture": "textures/guns/deagleg",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_bsss4@how_to_play_common.paragraph": {
+					"$text": "The Desert Eagle is a semi-automatic handgun notable for chambering the largest centerfire cartridge of any magazine-fed, self-loading pistol. It has 7 bullets and it does 18 damage. Just be careful of that recoil it has unlike it's normal counterpart. To craft, simply place a gold block and a normal Desert Eagle in the crafting table."
+				}
+			},
+			{
+				"padding_bsqqs4@how_to_play_common.padding": {}
+			},
+			{
+				"header_b7@how_to_play_common.header": {
+					"$text": "M9 Beretta"
+				}
+			},
+			{
+				"imagsse_b13@how_to_play_common.image": {
+					"texture": "textures/guns/ber",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_bsss4@how_to_play_common.paragraph": {
+					"$text": "The M9 Beretta or previously, \"Beretta\", is a Pistol that deals 5 damage and has 15 ammo capacity. It was revived by the power of @SBawls69."
+				}
+			},
+			{
+				"padding_bsqqs4@how_to_play_common.padding": {}
+			},
+			{
+				"header_b7@how_to_play_common.header": {
+					"$text": "Tactical USP"
+				}
+			},
+			{
+				"imagsse_b13@how_to_play_common.image": {
+					"texture": "textures/guns/usp",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_bsss4@how_to_play_common.paragraph": {
+					"$text": "The USP is a semi-automatic pistol developed in Germany by Heckler & Koch GmbH of Oberndorf am Neckar as a replacement for the P7 series of handguns. It has been bought back to the Add-on with the silence feature! to silence, put the USP into the crafting table. Your shots will be more accurate, but less damaging."
+				}
+			},
+			{
+				"padding_bsqqs4@how_to_play_common.padding": {}
+			},
+			{
+				"header_b7@how_to_play_common.header": {
+					"$text": "Tactical Silenced USP"
+				}
+			},
+			{
+				"imagsse_b13@how_to_play_common.image": {
+					"texture": "textures/guns/usps",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_bsss4@how_to_play_common.paragraph": {
+					"$text": "This is the silenced variant. Remember, your shots will not deal the same damage. To unsilence, put the USP back in the crafting table."
+				}
+			},
+			{
+				"padding_bsqqs4@how_to_play_common.padding": {}
+			}
+		]
+	},
+	"shotgun_section@how_to_play_common.main_sections": {
+		"bindings": [
+			{
+				"binding_type": "view",
+				"source_control_name": "shotgun_button_toggle",
+				"source_property_name": "#toggle_state",
+				"target_property_name": "#visible"
+			}
+		],
+		"controls": [
+			{
+				"header_sss7@how_to_play_common.header": {
+					"$text": "M3"
+				}
+			},
+			{
+				"image_6363613@how_to_play_common.image": {
+					"texture": "textures/guns/m3",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_4zzzg@how_to_play_common.paragraph": {
+					"$text": "The Benelli M3 is a semi-automatic shotgun that is known in a lot of FPS franchises such as Counter-Strike. The M3 does 20 damage, and also does knockback upon hitting an entity."
+				}
+			},
+			{
+				"padding_4@how_to_play_common.padding": {}
+			},
+			{
+				"header_ssjjsss7@how_to_play_common.header": {
+					"$text": "AA-12"
+				}
+			},
+			{
+				"image_636jsjs3613@how_to_play_common.image": {
+					"texture": "textures/guns/aa12",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_4zz82pqoiqh73zg@how_to_play_common.paragraph": {
+					"$text": "The Automatic AA-12 is a shotgun that spews out its powerful bullets every 3 ticks. You may call this shotgun OP but it's no longer OP when you know how to counter an AA-12 user properly."
+				}
+			},
+			{
+				"padding_4837pouhff27@how_to_play_common.padding": {}
+			},
+			{
+				"header_ssjjsss7@how_to_play_common.header": {
+					"$text": "M1881 Double Barrel"
+				}
+			},
+			{
+				"image_636jsjs3613@how_to_play_common.image": {
+					"texture": "textures/guns/m1881",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_4zz82pqoiqh73zg@how_to_play_common.paragraph": {
+					"$text": "The M1881 is a quick action close ranged shotgun that is used to kill 1 enemy at once. It can be powerful at close distance, but it will not deal damage on long range."
+				}
+			},
+			{
+				"padding_4837pouhff27@how_to_play_common.padding": {}
+			}
+		]
+	},
+	"smg_section@how_to_play_common.main_sections": {
+		"bindings": [
+			{
+				"binding_type": "view",
+				"source_control_name": "smg_button_toggle",
+				"source_property_name": "#toggle_state",
+				"target_property_name": "#visible"
+			}
+		],
+		"controls": [
+			{
+				"header_744@how_to_play_common.header": {
+					"$text": "Kriss Vector"
+				}
+			},
+			{
+				"image_636366313@how_to_play_common.image": {
+					"texture": "textures/guns/kriss",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_ddd4@how_to_play_common.paragraph": {
+					"$text": "Kriss is a little bit special of an SMG, it looks very different than the other ordinary SMG's, and while holding it, you feel as if this gun was designed for a Zombie Apocalypse."
+				}
+			},
+			{
+				"header_7fffff@how_to_play_common.header": {
+					"$text": "UMP-45"
+				}
+			},
+			{
+				"image_1387537636366363@how_to_play_common.image": {
+					"texture": "textures/guns/ump45",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_kddk4@how_to_play_common.paragraph": {
+					"$text": "UMP45 is an SMG that is slower than all of the other SMG by just 1 tick, but it's damage and accuracy upclose will not disappoint you."
+				}
+			},
+			{
+				"padding_a4@how_to_play_common.padding": {}
+			},
+			{
+				"header_a9@how_to_play_common.header": {
+					"$text": "MP5"
+				}
+			},
+			{
+				"image_a15@how_to_play_common.image": {
+					"texture": "textures/guns/mp5",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_a6@how_to_play_common.paragraph": {
+					"$text": "The MP5 is the classic of SMG classes. It can make your enemies trimble in nostalgia or it can make you miss all of your shots."
+				}
+			},
+			{
+				"padding_a7@how_to_play_common.padding": {}
+			},
+			{
+				"header_a11@how_to_play_common.header": {
+					"$text": "P90"
+				}
+			},
+			{
+				"image_a17@how_to_play_common.image": {
+					"texture": "textures/guns/p90",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_a8@how_to_play_common.paragraph": {
+					"$text": "A submachine gun that is very known for rushing into somewhere and apparently, every russian loves this weapon. The P90 is a Belgian SMG that has 50 ammo capacity and can make you run faster than rifles. It is not recommended to spray this SMG from afar... Spray and Pray whilst you're flashbanged!"
+				}
+			},
+			{
+				"padding_a8@how_to_play_common.padding": {}
+			},
+			{
+				"header_a11@how_to_play_common.header": {
+					"$text": "UZI"
+				}
+			},
+			{
+				"image_a17@how_to_play_common.image": {
+					"texture": "textures/guns/uzi",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_a8@how_to_play_common.paragraph": {
+					"$text": "The UZI is a submachine gun that replaced the MAC-10 in order for the Add-on to be consistent. It has 25 ammo capacity, and the spraying of this SMG may be a little hard at first."
+				}
+			},
+			{
+				"padding_a8@how_to_play_common.padding": {}
+			},
+			{
+				"header_a11@how_to_play_common.header": {
+					"$text": "MP-40"
+				}
+			},
+			{
+				"image_a17@how_to_play_common.image": {
+					"texture": "textures/guns/mp40",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_a8@how_to_play_common.paragraph": {
+					"$text": "The MP 40 is a submachine gun chambered for the 9×19mm Parabellum cartridge. It was developed in Nazi Germany and used extensively by the Axis powers during World War II."
+				}
+			},
+			{
+				"padding_a8@how_to_play_common.padding": {}
+			}
+		]
+	},
+	"rifle_section@how_to_play_common.main_sections": {
+		"bindings": [
+			{
+				"binding_type": "view",
+				"source_control_name": "rifle_button_toggle",
+				"source_property_name": "#toggle_state",
+				"target_property_name": "#visible"
+			}
+		],
+		"controls": [
+			{
+				"header_12@how_to_play_common.header": {
+					"$text": "AK47"
+				}
+			},
+			{
+				"image_18@how_to_play_common.image": {
+					"texture": "textures/guns/ak47",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_9@how_to_play_common.paragraph": {
+					"$text": "The AK-47, officially known as the Avtomat Kalashnikova is a heavy assault rifle that is featured in many FPS games. This rifle is the counterpart to the M4A1. What you get from the AK is that your shots does more damage, and they have a lot of randomness."
+				}
+			},
+			{
+				"padding_9@how_to_play_common.padding": {}
+			},
+			{
+				"header_12@how_to_play_common.header": {
+					"$text": "AK47 Gold Edition"
+				}
+			},
+			{
+				"image_18@how_to_play_common.image": {
+					"texture": "textures/guns/ak47g",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_9@how_to_play_common.paragraph": {
+					"$text": "The AK-47, officially known as the Avtomat Kalashnikova is a heavy assault rifle that is featured in many FPS games. The Gold Edition is obtained by placing a Gold Block and a normal AK-47 in the crafting table. Your spread will be less, you will do +1 damage, and overall, you will look BADASS!"
+				}
+			},
+			{
+				"padding_9@how_to_play_common.padding": {}
+			},
+			{
+				"header_13@how_to_play_common.header": {
+					"$text": "M4A1"
+				}
+			},
+			{
+				"image_19@how_to_play_common.image": {
+					"texture": "textures/guns/m4",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_10@how_to_play_common.paragraph": {
+					"$text": "Also known as M4 this rifle is the counterpart to the AK-47. Unlike the AK, your shots are more accurate, but less damaging and less fatal. To silence, sneak and then hit once."
+				}
+			},
+			{
+				"padding_10@how_to_play_common.padding": {}
+			},
+			{
+				"header_13@how_to_play_common.header": {
+					"$text": "Silenced M4A1"
+				}
+			},
+			{
+				"image_19@how_to_play_common.image": {
+					"texture": "textures/guns/m4sil",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_10@how_to_play_common.paragraph": {
+					"$text": "The silenced version of the M4 can be obtained by putting a normal M4 into the crafting table. Will make your shots very accurate, less damaging and you will not be heard from afar, unlike the unsilenced M4. To unsilence, sneak and hit once."
+				}
+			},
+			{
+				"padding_10@how_to_play_common.padding": {}
+			},
+			{
+				"header_13@how_to_play_common.header": {
+					"$text": "Famas"
+				}
+			},
+			{
+				"image_19@how_to_play_common.image": {
+					"texture": "textures/guns/famas",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_10@how_to_play_common.paragraph": {
+					"$text": "The famas is a bullpup-styled assault rifle designed and manufactured in France. It is the Galil's counterpart. The famas is similar to the M4A1 and the AK-47, but it just deals less damage than the M4 and the accuracy of it is worse than the M4."
+				}
+			},
+			{
+				"padding_10@how_to_play_common.padding": {}
+			},
+			{
+				"header_13@how_to_play_common.header": {
+					"$text": "IMI Galil"
+				}
+			},
+			{
+				"image_19@how_to_play_common.image": {
+					"texture": "textures/guns/galil",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_10@how_to_play_common.paragraph": {
+					"$text": "The IMI Galil is a replacement for the old, Galil AR. The IMI Galil is a worse version of its old Galil AR counterpart, yet it is surprisingly similar to the AK-47... just less damage and worse accuracy."
+				}
+			},
+			{
+				"padding_10@how_to_play_common.padding": {}
+			},
+			{
+				"header_13@how_to_play_common.header": {
+					"$text": "Scar-L"
+				}
+			},
+			{
+				"image_19@how_to_play_common.image": {
+					"texture": "textures/guns/scar",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_10@how_to_play_common.paragraph": {
+					"$text": "The Scar-L is a heavy assault rifle that acts like and M4A1 and an AK-47 at the same time, your shots may be inaccurate, but you can still see where they are going. And in terms of damage, it's in the middle of the M4 and the AK."
+				}
+			},
+			{
+				"padding_10@how_to_play_common.padding": {}
+			},
+			{
+				"header_13@how_to_play_common.header": {
+					"$text": "G36C"
+				}
+			},
+			{
+				"image_19@how_to_play_common.image": {
+					"texture": "textures/guns/g36c",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_10@how_to_play_common.paragraph": {
+					"$text": "An old time favourite, the \"G36C\" is now back to the Add-on, and it's better and stronger than before!"
+				}
+			},
+			{
+				"padding_10@how_to_play_common.padding": {}
+			},
+			{
+				"header_13@how_to_play_common.header": {
+					"$text": "AUG"
+				}
+			},
+			{
+				"image_19@how_to_play_common.image": {
+					"texture": "textures/guns/aug",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_10@how_to_play_common.paragraph": {
+					"$text": "The beloved aug (not) is now re-added back.. but it got changed. You will walk slow with it and you will deal 12-14 damage (very high!) but when you crouch, your bullets will be very accurate and precise, but your damage lowers to 6-7."
+				}
+			}
+		]
+	},
+	"sniper_section@how_to_play_common.main_sections": {
+		"bindings": [
+			{
+				"binding_type": "view",
+				"source_control_name": "sniper_button_toggle",
+				"source_property_name": "#toggle_state",
+				"target_property_name": "#visible"
+			}
+		],
+		"controls": [
+			{
+				"header_a18@how_to_play_common.header": {
+					"$text": "Scout"
+				}
+			},
+			{
+				"image_a24@how_to_play_common.image": {
+					"texture": "textures/guns/scout",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_a14@how_to_play_common.paragraph": {
+					"$text": "The Schmidt Scout is a sniper rifle that can make you move faster than other snipers, but it does 18 damage to any target, and has a 10 bullet capacity."
+				}
+			},
+			{
+				"padding_a14@how_to_play_common.padding": {}
+			},
+			{
+				"header_a19@how_to_play_common.header": {
+					"$text": "SVD"
+				}
+			},
+			{
+				"image_a25@how_to_play_common.image": {
+					"texture": "textures/guns/svd",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_a15@how_to_play_common.paragraph": {
+					"$text": "The SVD Dragunov sniper rifle is a semi-automatic sniper that can deal 10-9 damage on every registered shot. Remember to crouch before shooting this gun, otherwise your bullets will go all over the place."
+				}
+			},
+			{
+				"padding_a15@how_to_play_common.padding": {}
+			},
+			{
+				"header_a20@how_to_play_common.header": {
+					"$text": "Kar98k"
+				}
+			},
+			{
+				"image_a26@how_to_play_common.image": {
+					"texture": "textures/guns/kar",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_a16@how_to_play_common.paragraph": {
+					"$text": "The Karabiner 98 kurz, often abbreviated Kar98k or K98k and often incorrectly referred to as a K98, is a bolt-action rifle chambered for the 7.92×57mm Mauser cartridge that was adopted on 21 June 1935 as the standard service rifle by the German Wehrmacht."
+				}
+			},
+			{
+				"padding_a16@how_to_play_common.padding": {}
+			},
+			{
+				"header_a20@how_to_play_common.header": {
+					"$text": "AWP"
+				}
+			},
+			{
+				"image_a26@how_to_play_common.image": {
+					"texture": "textures/guns/awp",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_a16@how_to_play_common.paragraph": {
+					"$text": "The infamous AWP is very known for its 1 shot 1 kill policy. It has been added to replace it's lost brother, the \"AWM\". It will ignore walls, and hit everything in it's way."
+				}
+			},
+			{
+				"padding_a16@how_to_play_common.padding": {}
+			},
+			{
+				"header_13@how_to_play_common.header": {
+					"$text": "M200 CheyTac Intervention"
+				}
+			},
+			{
+				"image_a26@how_to_play_common.image": {
+					"texture": "textures/guns/m200",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_a16@how_to_play_common.paragraph": {
+					"$text": "A special Sniper Rifle that allows you to have a night-vision look whilst scoping, it can break glass and has a 7 ammo capacity. You have better accuracy while no scoping with this weapon, too!"
+				}
+			}
+		]
+	},
+	"melee_section@how_to_play_common.main_sections": {
+		"bindings": [
+			{
+				"binding_type": "view",
+				"source_control_name": "melee_button_toggle",
+				"source_property_name": "#toggle_state",
+				"target_property_name": "#visible"
+			}
+		],
+		"controls": [
+			{
+				"header_7@how_to_play_common.header": {
+					"$text": "G10"
+				}
+			},
+			{
+				"image_81644379913@how_to_play_common.image": {
+					"texture": "textures/melee/g10",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_6363734@how_to_play_common.paragraph": {
+					"$text": "Originally used as a base for circuit boards, now it is used to kill humans and deal 15 damage upon every attack!"
+				}
+			},
+			{
+				"padding_4@how_to_play_common.padding": {}
+			},
+			{
+				"header_7@how_to_play_common.header": {
+					"$text": "Karambit"
+				}
+			},
+			{
+				"image_81644379913@how_to_play_common.image": {
+					"texture": "textures/melee/karambit",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_6363734@how_to_play_common.paragraph": {
+					"$text": "The indo knife, \"Karambit\", has a curved or hooked blade that is used to cut things efficient. It deals 24 damage (12 herts) and has a 2 second cool down."
+				}
+			},
+			{
+				"padding_4@how_to_play_common.padding": {}
+			},
+			{
+				"header_7@how_to_play_common.header": {
+					"$text": "M9 Bayonet"
+				}
+			},
+			{
+				"image_81644379913@how_to_play_common.image": {
+					"texture": "textures/melee/m9",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_6363734@how_to_play_common.paragraph": {
+					"$text": "The M9 Bayonet, officially known as the M9 Phrobis III, is a multi-purpose knife and bayonet officially adopted in 1986 by the United States. It has a 7-inch blade and is issued with a sheath designed to double as a wire cutter. Deals 15 damage."
+				}
+			},
+			{
+				"padding_4@how_to_play_common.padding": {}
+			},
+			{
+				"header_7@how_to_play_common.header": {
+					"$text": "Brass Knuckles "
+				}
+			},
+			{
+				"image_81644379913@how_to_play_common.image": {
+					"texture": "textures/melee/brass",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_6363734@how_to_play_common.paragraph": {
+					"$text": "Upon hitting someone with the brass knuckles, they will get nausea and a little damage. It also has a 1 second cool down and does 5 damage per attack (excluding the poison). This melee weapon was made to get ready for the Multiplayer update!"
+				}
+			},
+			{
+				"padding_4@how_to_play_common.padding": {}
+			},
+			{
+				"header_7@how_to_play_common.header": {
+					"$text": "Balisong "
+				}
+			},
+			{
+				"image_81644379913@how_to_play_common.image": {
+					"texture": "textures/melee/butterfly",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_6363734@how_to_play_common.paragraph": {
+					"$text": "Aka the butterfly knife, it is a knife that does 12 damage upon hit and it has \"open\" feature when equipping the closed variant."
+				}
+			},
+			{
+				"padding_4@how_to_play_common.padding": {}
+			},
+			{
+				"header_7@how_to_play_common.header": {
+					"$text": "Tomahawk"
+				}
+			},
+			{
+				"image_81644379913@how_to_play_common.image": {
+					"texture": "textures/melee/tom",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_6363734@how_to_play_common.paragraph": {
+					"$text": "The Tomahawk is a special Axe that can be used for melee and deal 7 damage, or you can throw it and deal 14-15 damage and get it after 45 ticks."
+				}
+			},
+			{
+				"padding_4@how_to_play_common.padding": {}
+			},
+			{
+				"header_7@how_to_play_common.header": {
+					"$text": "Kukri"
+				}
+			},
+			{
+				"image_81644379913@how_to_play_common.image": {
+					"texture": "textures/melee/kukri",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_6363734@how_to_play_common.paragraph": {
+					"$text": "A melee that was used to cut banana trees, now it turned into a melee manslaugher, dealing 19 damage upon hit and a 1 second cooldown because of how heavy and deadly it can be at times."
+				}
+			}
+		]
+	},
+	"etc_section@how_to_play_common.main_sections": {
+		"bindings": [
+			{
+				"binding_type": "view",
+				"source_control_name": "etc_button_toggle",
+				"source_property_name": "#toggle_state",
+				"target_property_name": "#visible"
+			}
+		],
+		"controls": [
+			{
+				"header_7@how_to_play_common.header": {
+					"$text": "Explosive Granade"
+				}
+			},
+			{
+				"image_81644379913@how_to_play_common.image": {
+					"texture": "textures/granades/explosive",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_6363734@how_to_play_common.paragraph": {
+					"$text": "A grenade that is often used to blow up a certain area or blowing up players that are close to each other. Very useful if you have low health and you think there is an enemy on the other side. Just pull the pin, and throw it!"
+				}
+			},
+			{
+				"padding_4@how_to_play_common.padding": {}
+			},
+			{
+				"header_c7@how_to_play_common.header": {
+					"$text": "Smoke Granade"
+				}
+			},
+			{
+				"image_a3@how_to_play_common.image": {
+					"texture": "textures/granades/smoke",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_c5@how_to_play_common.paragraph": {
+					"$text": "A smoke grenade is a canister-type grenade used as a signaling device, target or landing zone marking device, or as a screening device for unit movements. Upon this grenade's explosion, it will make a screening emitter that makes people unable to see through it."
+				}
+			},
+			{
+				"padding_c5@how_to_play_common.padding": {}
+			},
+			{
+				"header_dkksjc7@how_to_play_common.header": {
+					"$text": "Flashbang Granade"
+				}
+			},
+			{
+				"image_wuwyga3@how_to_play_common.image": {
+					"texture": "textures/granades/flashbang",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_c5sjuwy@how_to_play_common.paragraph": {
+					"$text": "A stun grenade, also known as a flash grenade, flashbang, thunderflash or sound bomb, is an ostensibly non-lethal explosive device, used to temporarily disorient an enemy's senses. Upon releasing this grenade, it will blind all players in the radius of 10 blocks for 10 seconds."
+				}
+			},
+			{
+				"padding_chshs5@how_to_play_common.padding": {}
+			},
+			{
+				"header_dkkss7@how_to_play_common.header": {
+					"$text": "Molotov"
+				}
+			},
+			{
+				"image_wfgds@how_to_play_common.image": {
+					"texture": "textures/granades/molotov",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_csyrdv@how_to_play_common.paragraph": {
+					"$text": "A flame grenade that was named after Vyacheslav Molotov. This grenade was manufactured differently in this add-on, instead, the player needs to wait for the grenade to explode so it bursts out its fire for 350 ticks."
+				}
+			},
+			{
+				"padding_bruh5@how_to_play_common.padding": {}
+			},
+			{
+				"header_ds64f3@how_to_play_common.header": {
+					"$text": "Poisonous Gas"
+				}
+			},
+			{
+				"image_wfgdsds@how_to_play_common.image": {
+					"texture": "textures/granades/pois",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_czy7r8dcv@how_to_play_common.paragraph": {
+					"$text": "A deadly weapon from WWI, the Poisonous Gas has a radius of 4 blocks. In that radius all players (and you) will be affected with Fatal Poison that can kill in a matter of seconds. You better run away when this thing is summoned!"
+				}
+			},
+			{
+				"padding_bruh69@how_to_play_common.padding": {}
+			},
+			{
+				"header_ds64f3@how_to_play_common.header": {
+					"$text": "M67 Grenade"
+				}
+			},
+			{
+				"image_wfgdsds@how_to_play_common.image": {
+					"texture": "textures/granades/m67",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_czy7r8dcv@how_to_play_common.paragraph": {
+					"$text": "Do you miss when you used splash potions as grenades? do you miss the fact when a splash potion hits anything then it explodes on impact? if so, The M67 Frag Grenade is for you!"
+				}
+			},
+			{
+				"padding_bruh69@how_to_play_common.padding": {}
+			}
+		]
+	},
+	"other_section@how_to_play_common.main_sections": {
+		"bindings": [
+			{
+				"binding_type": "view",
+				"source_control_name": "other_button_toggle",
+				"source_property_name": "#toggle_state",
+				"target_property_name": "#visible"
+			}
+		],
+		"controls": [
+			{
+				"header_ddd7@how_to_play_common.header": {
+					"$text": "RPG"
+				}
+			},
+			{
+				"image_635256213@how_to_play_common.image": {
+					"texture": "textures/guns/rpg",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_jdjdjd4@how_to_play_common.paragraph": {
+					"$text": "The RPG is an explosive weapon that allows you to shoot explosive bombs every 68 ticks. Those bombs are VERY devastating!"
+				}
+			},
+			{
+				"padding_49272@how_to_play_common.padding": {}
+			},
+			{
+				"header_ddd7@how_to_play_common.header": {
+					"$text": "Flame Thrower"
+				}
+			},
+			{
+				"image_635256213@how_to_play_common.image": {
+					"texture": "textures/guns/flame",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_jdjdjd4@how_to_play_common.paragraph": {
+					"$text": "Flame Thrower is a special flame-type equipment that allows you to set any entity on fire nearby....infinitly!"
+				}
+			},
+			{
+				"padding_49372@how_to_play_common.padding": {}
+			},
+			{
+				"header_ddd7@how_to_play_common.header": {
+					"$text": "M134 Minigun"
+				}
+			},
+			{
+				"image_635256213@how_to_play_common.image": {
+					"texture": "textures/guns/minigun",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_jdjdjd4@how_to_play_common.paragraph": {
+					"$text": "This is a weapon that every one of you has asked for.... The Minigun! though, there are things you need to be aware of. The Minigun has 100 ammo, 200 tick reload time and you need to hold it for a couple of seconds in order for it to spew out its dangerous inaccurate shots!"
+				}
+			},
+			{
+				"padding_49372@how_to_play_common.padding": {}
+			},
+			{
+				"header_ddd7@how_to_play_common.header": {
+					"$text": "M249"
+				}
+			},
+			{
+				"image_635256213@how_to_play_common.image": {
+					"texture": "textures/guns/m249",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_jdjdjd4@how_to_play_common.paragraph": {
+					"$text": "A Light Machine Gun (LMG) that 85 percent of you wanted to be back, and here it is! The M249 has 100 ammo capacity, and it does 15-20 damage per shot."
+				}
+			},
+			{
+				"padding_49372@how_to_play_common.padding": {}
+			},
+			{
+				"header_ddd7@how_to_play_common.header": {
+					"$text": "Parachute"
+				}
+			},
+			{
+				"image_635256213@how_to_play_common.image": {
+					"texture": "textures/guns/par",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_jdjdjd4@how_to_play_common.paragraph": {
+					"$text": "An equipment that is used to make you land safe. Just hold (right click) the item to apply it on your head, and hold (right click) again to unqeuip it."
+				}
+			},
+			{
+				"padding_49372@how_to_play_common.padding": {}
+			},
+			{
+				"header_ddd7@how_to_play_common.header": {
+					"$text": "C4"
+				}
+			},
+			{
+				"image_635256213@how_to_play_common.image": {
+					"texture": "textures/guns/c4",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_jdjdjd4@how_to_play_common.paragraph": {
+					"$text": "A weapon of mass destruction that is designed to be placed somewhere effective to deal massive explosion damage to it's surroundings and will break blocks."
+				}
+			},
+			{
+				"padding_49372@how_to_play_common.padding": {}
+			},
+			{
+				"header_ddd7@how_to_play_common.header": {
+					"$text": "Medical Kit"
+				}
+			},
+			{
+				"image_635256213@how_to_play_common.image": {
+					"texture": "textures/guns/heal",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_jdjdjd4@how_to_play_common.paragraph": {
+					"$text": "Low health? simply right click or hold your screen to apply the medical kit."
+				}
+			},
+			{
+				"padding_49372@how_to_play_common.padding": {}
+			},
+			{
+				"header_ddd7@how_to_play_common.header": {
+					"$text": "Night Vision Goggles"
+				}
+			},
+			{
+				"image_635256213@how_to_play_common.image": {
+					"texture": "textures/guns/night",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_jdjdjd4@how_to_play_common.paragraph": {
+					"$text": "Can't see very well? hold (right click) the item to equip it on your head, and hold (right click) the item again to enquip it!"
+				}
+			},
+			{
+				"padding_49372@how_to_play_common.padding": {}
+			},
+			{
+				"header_ddd7@how_to_play_common.header": {
+					"$text": "MGL "
+				}
+			},
+			{
+				"image_635256213@how_to_play_common.image": {
+					"texture": "textures/guns/mgl",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_jdjdjd4@how_to_play_common.paragraph": {
+					"$text": "The highly request bomb-type weapon, Multiple Grenade Launcher or simply \"MGL\" is a weapon that can shoot grendes into the sky and once they land, they will explode!"
+				}
+			},
+			{
+				"padding_49372@how_to_play_common.padding": {}
+			},
+			{
+				"header_ddd7@how_to_play_common.header": {
+					"$text": "Flare Gun "
+				}
+			},
+			{
+				"image_635256213@how_to_play_common.image": {
+					"texture": "textures/guns/flare",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_jdjdjd4@how_to_play_common.paragraph": {
+					"$text": "The flare gun allows you to fire a bullet that will cause a Supply Drop event! to craft, place a bow and 1 redstone into the crafting table, can be assembled any shape. The drops are based on luck, and not chance."
+				}
+			},
+			{
+				"padding_49372@how_to_play_common.padding": {}
+			},
+			{
+				"header_ddd7@how_to_play_common.header": {
+					"$text": "Golden Flare Gun "
+				}
+			},
+			{
+				"image_635256213@how_to_play_common.image": {
+					"texture": "textures/guns/flare2",
+					"size": [
+						"100%",
+						"100px"
+					]
+				}
+			},
+			{
+				"paragraph_jdjdjd4@how_to_play_common.paragraph": {
+					"$text": "A flare gun that has a better chance of giving you decent stuff, rather than just relying on luck. To craft, simply put a normal flare gun and a gold block into the crafting table."
+				}
+			}
+		]
+	}
+}

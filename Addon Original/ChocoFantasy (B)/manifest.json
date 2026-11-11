@@ -1,0 +1,23 @@
+{
+  "format_version": 1,
+  "header": {
+    "description": "¡§fCrea un mundo lleno de pajaros voladores con abilidades especiales llamados §cchocobos§f! Creadores §3A L 3 X! MCPE §fy §aSlimeCraft",
+    "name": "§eChocoFantasy §f(§3R§f)",
+    "uuid": "e1fd6d88-6eb0-46b4-b41a-8aac8e33555c",
+    "version": [8, 8, 26]
+  },
+  "modules": [
+    {
+      "description": "¡§fCrea un mundo lleno de pajaros voladores con abilidades especiales llamados §cchocobos§f! Creadores §3A L 3 X! MCPE §fy §aSlimeCraft",
+      "type": "data",
+      "uuid": "d54da429-9472-4963-a27d-844c16e7ecbc",
+      "version": [8, 8, 26]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "68601ff8-5c1a-4040-bb7c-a21f383f61ab",
+      "version": [8, 8, 26]
+    }
+  ]
+}

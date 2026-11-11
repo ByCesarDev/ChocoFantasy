@@ -1,0 +1,26 @@
+{
+  "mob.chocobos.death": {
+    "category": "neutral",
+    "sounds": [{
+      "name": "sounds/mob/chocobos/death",
+        "volume": 5
+      }
+    ]
+  },
+  "mob.chocobos.hurt": {
+    "category": "neutral",
+    "sounds": [{
+      "name": "sounds/mob/chocobos/hurt",
+        "volume": 5
+      }
+    ]
+  },
+  "mob.chocobos.ambient": {
+    "category": "neutral",
+    "sounds": [{
+      "name": "sounds/mob/chocobos/ambient",
+        "volume": 5
+      }
+    ]
+  }
+}

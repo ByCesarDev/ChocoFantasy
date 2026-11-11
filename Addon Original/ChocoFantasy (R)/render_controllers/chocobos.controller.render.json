@@ -1,0 +1,18 @@
+{
+    "format_version": "1.8.0",
+    "render_controllers": {
+      "controller.render.chocobos": {
+        "arrays": {
+            "textures": {
+              "array.skins": [
+                "texture.default",
+                "texture.angry"
+              ]
+           }
+        },
+        "geometry": "Geometry.default",
+        "materials": [ { "*": "Material.default" } ],
+        "textures": [ "array.skins[query.is_powered + query.is_angry * 2]" ]
+      }
+    }
+  }

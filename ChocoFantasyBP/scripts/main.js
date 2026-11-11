@@ -13,6 +13,7 @@ const INERTIA_DAMPING = 0.85;    // Factor de amortiguación cuando no hay input
 // Map<string, { state: "ASCENDING" | "DESCENDING", hasLeftGround: boolean }>
 // ==========================================
 const flightStates = new Map();
+const playerRidingTracker = new Map();
 
 /**
  * Valida si la montura cumple todos los requisitos indispensables para volar:
@@ -25,8 +26,36 @@ function canFly(mount) {
     if (!mount || !mount.isValid() || mount.typeId !== CHOCOBO_IDENTIFIER) {
         return false;
     }
-    return mount.hasComponent("minecraft:is_tamed") && mount.hasComponent("minecraft:is_saddled");
+    const isTamed = mount.hasComponent("minecraft:is_tamed");
+    const isSaddled = mount.hasComponent("minecraft:is_saddled");
+    return isTamed && isSaddled;
 }
+
+// ==========================================
+// MONITOR DE MONTAJE / DESMONTAJE
+// ==========================================
+system.runInterval(() => {
+    for (const player of world.getAllPlayers()) {
+        try {
+            const wasRiding = playerRidingTracker.get(player.id) ?? false;
+            const riding = player.getComponent("minecraft:riding");
+            const mount = riding?.entityRidingOn;
+            const isRiding = !!mount;
+
+            if (!wasRiding && isRiding) {
+                const isTamed = mount.hasComponent("minecraft:is_tamed");
+                const isSaddled = mount.hasComponent("minecraft:is_saddled");
+                const canPowerJump = mount.hasComponent("minecraft:can_power_jump");
+                player.sendMessage(`§a[ChocoDebug] Te has MONTADO en: ${mount.typeId}`);
+                player.sendMessage(`§7[ChocoDebug] is_tamed: ${isTamed} | is_saddled: ${isSaddled} | can_power_jump: ${canPowerJump}`);
+            } else if (wasRiding && !isRiding) {
+                player.sendMessage(`§c[ChocoDebug] Evento detectado: ¡TE HAS DESMONTADO!`);
+            }
+
+            playerRidingTracker.set(player.id, isRiding);
+        } catch {}
+    }
+}, 1);
 
 // ==========================================
 // GESTIÓN DE EVENTOS DE ENTRADA (BOTÓN SALTO)
@@ -40,27 +69,49 @@ world.afterEvents.playerButtonInput.subscribe((event) => {
         const riding = player.getComponent("minecraft:riding");
         const mount = riding?.entityRidingOn;
 
-        // Si no cumple las condiciones de Chocobo domesticado + ensillado, no permitimos volar
-        if (!canFly(mount)) return;
+        const isPressed = newButtonState === ButtonState.Pressed;
+        player.sendMessage(`§e[ChocoDebug] Botón SALTO: ${isPressed ? "PRESIONADO" : "LIBERADO"}`);
 
-        if (newButtonState === ButtonState.Pressed) {
+        if (!mount) {
+            player.sendMessage(`§c[ChocoDebug] Salto detectado pero NO estás montando ninguna entidad.`);
+            return;
+        }
+
+        const isTamed = mount.hasComponent("minecraft:is_tamed");
+        const isSaddled = mount.hasComponent("minecraft:is_saddled");
+        const canPowerJump = mount.hasComponent("minecraft:can_power_jump");
+        const flyable = canFly(mount);
+
+        player.sendMessage(`§7[ChocoDebug] Montura: ${mount.typeId} | Tamed: ${isTamed} | Saddled: ${isSaddled} | PowerJump: ${canPowerJump} | canFly: ${flyable}`);
+
+        if (!flyable) {
+            let razon = "";
+            if (!isTamed) razon += "NO está domesticado. ";
+            if (!isSaddled) razon += "NO tiene silla puesta. ";
+            player.sendMessage(`§c[ChocoDebug] Vuelo denegado: ${razon}`);
+            return;
+        }
+
+        if (isPressed) {
             // Iniciar o reanudar ascenso en el aire
             const current = flightStates.get(mount.id);
             flightStates.set(mount.id, {
                 state: "ASCENDING",
                 hasLeftGround: current ? current.hasLeftGround : false
             });
+            player.sendMessage(`§a[ChocoDebug] ¡Activando cf:chocobo_start_flying! Estado: ASCENDING`);
             mount.triggerEvent("cf:chocobo_start_flying");
-        } else if (newButtonState === ButtonState.Released) {
+        } else {
             // Liberar salto NO aterriza el Chocobo: entra en modo descenso manteniendo control aéreo
             const current = flightStates.get(mount.id);
             if (current) {
                 current.state = "DESCENDING";
+                player.sendMessage(`§6[ChocoDebug] ¡Activando cf:chocobo_start_descending! Estado: DESCENDING`);
                 mount.triggerEvent("cf:chocobo_start_descending");
             }
         }
-    } catch {
-        // Protección contra entidades descargadas
+    } catch (err) {
+        console.warn(`[ChocoDebug Error] ${err}`);
     }
 });
 
@@ -102,6 +153,7 @@ system.runInterval(() => {
 
             // Validación estricta en vuelo: si pierde la silla o se des-domestica en el aire
             if (!canFly(mount)) {
+                player.sendMessage(`§c[ChocoDebug] Perdió requisitos de vuelo en el aire. Cancelando...`);
                 mount.clearVelocity();
                 mount.triggerEvent("cf:chocobo_stop_flying");
                 flightStates.delete(mount.id);
@@ -109,13 +161,15 @@ system.runInterval(() => {
             }
 
             // Registrar cuándo realmente abandona el suelo
-            if (!mount.isOnGround) {
+            if (!mount.isOnGround && !flightData.hasLeftGround) {
                 flightData.hasLeftGround = true;
+                player.sendMessage(`§b[ChocoDebug] ¡Chocobo despegó del suelo! (hasLeftGround = true)`);
             }
 
             // Detección de aterrizaje confirmado:
             // Solo aterriza si el Chocobo ya estuvo en el aire y ha vuelto a tocar el suelo
             if (mount.isOnGround && flightData.hasLeftGround) {
+                player.sendMessage(`§e[ChocoDebug] ¡Aterrizaje confirmado! Restaurando controles terrestres.`);
                 mount.clearVelocity();
                 mount.triggerEvent("cf:chocobo_stop_flying");
                 flightStates.delete(mount.id);

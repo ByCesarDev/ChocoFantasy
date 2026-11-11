@@ -1,0 +1,28 @@
+{
+    "format_version": "1.10.0",
+    "animation_controllers": {
+      "controller.animation.chocobo_fly_end": {
+        "initial_state": "default",
+          "states": {
+            "default": {
+              "transitions": [
+                {
+                "end": "!query.has_rider"
+              }
+            ]
+          },
+          "end": {
+            "transitions": [
+              {
+              "default": "(1.0)"
+            }
+          ],
+          "on_entry":[
+          "/effect @e[c=1,type=cf:chocobo_yellow_1,r=2] clear",
+          "/effect @e[c=1,type=cf:chocobo_yellow_1,r=2] slow_falling 1000 1 true"
+          ]
+        }
+      }
+    }
+  }
+}

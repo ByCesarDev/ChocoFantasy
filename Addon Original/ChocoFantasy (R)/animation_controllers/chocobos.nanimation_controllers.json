@@ -1,0 +1,81 @@
+{
+  "format_version" : "1.10.0",
+  "animation_controllers" : {
+    "controller.animation.chocobo.move": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "variables": {
+          "move_speed": {
+            "input": "query.modified_move_speed && query.is_on_ground && query.ground_speed > 0",
+              "remap_curve": {
+                "0.0": 0.0,
+                "0.25": 1.0
+              }
+            }
+          },
+          "animations": [
+            {
+            "moving": "variable.move_speed"
+          }
+        ]
+      }
+    }
+  },
+  "controller.animation.chocobo.static" : {
+    "initial_state" : "default",
+    "states" : {      "default" : {
+        "animations" : [{ "staticking": "query.is_on_ground && !query.is_sitting" }]
+        }
+      }
+    },
+    "controller.animation.poison_dragon.look_at_target" : {
+      "initial_state" : "default",
+        "states" : {
+          "default" : {
+            "animations" : [ "look_at_target_default" ],
+              "transitions" : [
+                {
+                "gliding" : "query.is_gliding"
+              },
+              {
+              "swimming" : "query.is_swimming"
+              }
+            ]
+          },
+          "gliding" : {
+            "animations" : [ "look_at_target_gliding" ],
+              "transitions" : [
+                {
+                "swimming" : "query.is_swimming"
+                },
+                {
+                "default" : "!query.is_gliding"
+              }
+            ]
+          },
+          "swimming" : {
+            "animations" : [ "look_at_target_swimming" ],
+            "transitions" : [
+            {
+            "gliding" : "query.is_gliding"
+            },
+            {
+            "default" : "!query.is_swimming"
+            }
+          ]
+        }
+      }
+    },
+    "controller.animation.chocobo.fly" : {
+      "states": {
+        "fly": {
+          "animations": [{ "flyng": "!query.is_on_ground"}]
+        }      }    },
+    "controller.animation.chocobo.sit" : {
+      "states": {
+        "sit": {
+          "animations": [{ "sitting": "query.is_sitting"}]
+        }      }    }
+  }
+}

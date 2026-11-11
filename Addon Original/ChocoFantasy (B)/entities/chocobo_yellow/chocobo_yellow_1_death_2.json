@@ -1,0 +1,66 @@
+//Software Created By Francisco
+//Day 6/30/20
+//Power By java
+{
+  "format_version": "1.13.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "cf:chocobo_yellow_1_death_2",
+      "is_spawnable": false,
+      "is_summonable": false,
+      "is_experimental": false
+    },
+
+    "component_groups": { //Grupo de componentes
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [ "chocobo", "yellow", "death2" ]
+      },
+      "minecraft:loot": {        "table": "loot_tables/entities/chocobo.json"
+      },
+      "minecraft:physics": {
+      },
+      "minecraft:spawn_entity": [
+        {
+        "min_wait_time": 0,
+        "max_wait_time": 0,
+        "spawn_entity": "minecraft:xp_orb",
+        "single_use": true,
+        "num_to_spawn": 5,
+        "should_leash": true
+        }
+      ],
+      "minecraft:damage_sensor": { //Detectar tipo de daño
+        "triggers": [
+          {
+            "cause": "all",
+            "deals_damage": false
+          },
+          {
+          "on_damage": {
+              "event": "null"
+            }
+          }
+        ]
+      },
+      "minecraft:collision_box": {
+        "width": 0.6,
+        "height": 1.9
+      },
+      "minecraft:health": {
+        "value": 0,
+        "max": 0
+      },
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": true
+      }
+    },
+    "events": {
+      "minecraft:entity_spawned": { //Evento de aparicion de activar escudo
+        "add": { "component_groups": [ "minecraft:transformation_skeleton_guardian" ] }
+      }
+    }
+  }
+}

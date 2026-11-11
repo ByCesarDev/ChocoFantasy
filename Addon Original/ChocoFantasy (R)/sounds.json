@@ -1,0 +1,20 @@
+{
+  "entity_sounds": {
+    "entities": {
+      "cf:chocobo_yellow_1": {
+        "volume": 1.0,
+        "pitch": [ 0.8, 1.2 ],
+        "events": {
+          "ambient": "mob.chocobos.ambient",
+          "hurt": "mob.chocobos.hurt",
+          "death": "mob.chocobos.death",
+          "step": {
+            "sound": "mob.zombie.step",
+            "volume": 1.0,
+            "pitch": 1.0
+          }
+        }
+      }
+    }
+  }
+}

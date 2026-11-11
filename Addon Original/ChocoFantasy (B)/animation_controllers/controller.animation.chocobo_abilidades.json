@@ -1,0 +1,87 @@
+{
+    "format_version": "1.10.0",
+    "animation_controllers": {
+      "controller.animation.chocobo_abilidades_flyy": {
+        "initial_state": "default",
+          "states": {
+            "default": {
+              "transitions": [
+                {
+                "abilidad_fly": "query.modified_move_speed && query.ground_speed > 0 && query.is_tamed && query.has_rider"
+              }
+            ]
+          },
+          "abilidad_fly": {
+            "transitions": [
+              {
+              "default": "(1.0)"
+            }
+          ],
+          "on_entry":[
+            "/scoreboard objectives add tiempo dummy tiempo",
+            "/scoreboard players add @s tiempo 1",
+            "/execute @s[scores={tiempo=1000}] ~ ~ ~ effect @a[r=2] fire_resistance 1 250 true",
+            "/execute @s[scores={tiempo=1000}] ~ ~ ~ particle minecraft:totem_particle ~ ~ ~",
+            "/execute @s[scores={tiempo=1000}] ~ ~ ~ playsound random.totem @a[r=2]",
+            "/execute @s[scores={tiempo=1000}] ~ ~ ~ title @a[r=2] actionbar §aNivel 1 alcanzado §f:§6 Abilidad de vuelo desbloqueada",
+            "/title @a times 20 60 20"
+          ]
+        }
+      }
+    },
+    "controller.animation.player_invocation2": {
+      "initial_state": "default",
+        "states": {
+          "default": {
+            "transitions": [
+              {
+              "invocation2": "query.is_fire_immune"
+            }
+          ]
+        },
+        "invocation2": {
+          "transitions": [
+            {
+            "default": "(1.0)"
+          }
+        ],
+        "on_entry":[
+            "/particle minecraft:soul_particle ~ ~ ~",
+            "/playsound mob.evocation_illager.prepare_summon @a ~ ~ ~",
+            "/summon mobs:friend_guardian_skeleton_invocation ~ ~ ~-5",
+            "/summon mobs:friend_guardian_skeleton_invocation ~ ~ ~5",
+            "/summon mobs:friend_guardian_skeleton_invocation ~-5 ~ ~3",
+            "/summon mobs:friend_guardian_skeleton_invocation ~-5 ~ ~-3",
+            "/summon mobs:friend_guardian_skeleton_invocation ~5 ~ ~3",
+            "/summon mobs:friend_guardian_skeleton_invocation ~5 ~ ~-3",
+            "/clear @s mobs:book_of_souls 0 1",
+            "@s minecraft:player_espera_start"
+          ]
+        }
+      }
+    },
+    "controller.animation.player_espera": {
+      "initial_state": "default",
+        "states": {
+          "default": {
+            "transitions": [
+              {
+              "espera": "query.is_saddled"
+            }
+          ]
+        },
+        "espera": {
+          "transitions": [
+            {
+            "default": "(1.0)"
+          }
+        ],
+        "on_entry":[
+          "/give @s mobs:book_of_souls 1",
+          "@s minecraft:player_give_end"
+          ]
+        }
+      }
+    }
+  }
+}
