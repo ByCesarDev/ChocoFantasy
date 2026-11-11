@@ -1,0 +1,27 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.chocobo.riding": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "transitions": [
+            {
+              "riding": "query.is_riding"
+            }
+          ]
+        },
+        "riding": {
+          "transitions": [
+            {
+              "default": "!query.is_riding"
+            }
+          ],
+          "on_entry": [
+            "@s cf:chocobo_mount_start"
+          ]
+        }
+      }
+    }
+  }
+}

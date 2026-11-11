@@ -1,0 +1,49 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.chocobo.fly_logic": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "transitions": [
+            {
+              "fly": "query.is_riding && query.is_jumping"
+            },
+            {
+              "falling": "query.is_riding && !query.is_jumping && !query.is_on_ground"
+            }
+          ],
+          "on_entry": [
+            "@s cf:chocobo_stop_slow_falling"
+          ]
+        },
+        "fly": {
+          "transitions": [
+            {
+              "falling": "query.is_riding && !query.is_jumping"
+            },
+            {
+              "default": "!query.is_riding"
+            }
+          ],
+          "on_entry": [
+            "@s cf:chocobo_start_flying"
+          ]
+        },
+        "falling": {
+          "transitions": [
+            {
+              "fly": "query.is_riding && query.is_jumping"
+            },
+            {
+              "default": "query.is_on_ground || !query.is_riding"
+            }
+          ],
+          "on_entry": [
+            "@s cf:chocobo_stop_flying"
+          ]
+        }
+      }
+    }
+  }
+}

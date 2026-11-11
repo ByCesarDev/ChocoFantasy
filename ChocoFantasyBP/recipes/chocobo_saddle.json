@@ -1,0 +1,27 @@
+{
+  "format_version": "1.12",
+  "minecraft:recipe_shaped": {
+    "description": {
+    "identifier": "cf:chocobo_saddle"
+    },
+
+    
+    "tags": [ "crafting_table" ],
+    "pattern": [
+      " SS",
+      " G ",
+      "SS "
+    ],
+    "key": {
+      "S": {
+        "item": "minecraft:leather"
+      },
+      "G": {
+        "item": "minecraft:saddle"
+      }
+    },
+    "result": {
+      "item": "cf:chocobo_saddle"
+    }
+  }
+}

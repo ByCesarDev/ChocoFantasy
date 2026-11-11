@@ -1,0 +1,27 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.chocobo.fly_cleanup": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "transitions": [
+            {
+              "end": "!query.has_rider && !query.is_on_ground"
+            }
+          ]
+        },
+        "end": {
+          "transitions": [
+            {
+              "default": "query.has_rider || query.is_on_ground"
+            }
+          ],
+          "on_entry": [
+            "@s cf:chocobo_mount_end"
+          ]
+        }
+      }
+    }
+  }
+}

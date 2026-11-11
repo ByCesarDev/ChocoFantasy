@@ -1,0 +1,52 @@
+{
+	"format_version": 2,
+	"metadata": {
+		"authors": [
+			"CesarDev/ByCesarKun"
+		],
+		"generated_with": {
+			"bridge": [
+				"2.7.52"
+			],
+			"dash": [
+				"0.11.7"
+			]
+		}
+	},
+	"header": {
+		"name": "ChocoFantasy",
+		"description": "",
+		"min_engine_version": [
+			1,
+			21,
+			80
+		],
+		"uuid": "8c7a61ff-b680-4f16-8355-43cc17388180",
+		"version": [
+			1,
+			0,
+			0
+		]
+	},
+	"modules": [
+		{
+			"type": "resources",
+			"uuid": "fd0f64f4-7f1f-47bf-81ba-18a28ae97d6e",
+			"version": [
+				1,
+				0,
+				0
+			]
+		}
+	],
+	"dependencies": [
+		{
+			"uuid": "f5dd9a12-6bce-4510-8199-a40c089c412f",
+			"version": [
+				1,
+				0,
+				0
+			]
+		}
+	]
+}

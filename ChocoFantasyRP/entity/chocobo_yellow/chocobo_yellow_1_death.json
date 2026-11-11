@@ -1,0 +1,39 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "cf:chocobo_yellow_1_death",
+      "materials": {
+        "default": "skeleton"
+      },
+      "textures": {
+        "default": "textures/entity/chocobos/chocobo_yellow_1",
+        "saddle": "textures/entity/chocobos/chocobo_saddle",
+        "angry": "textures/entity/chocobos/chocobo_yellow_1"
+      },
+      "geometry": {
+        "default": "geometry.chocobos"
+      },
+      "animations": {
+        "staticking": "animation.chocobo.death",
+        "static": "controller.animation.chocobo.death"
+      },
+      "scripts": {
+        "animate": [
+          "static"
+        ],
+        "pre_animation": [
+          "variable.attack = Math.sin(variable.attack_time * 30.0);",
+          "variable.roar_length = 1.0;"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.chocobos"
+      ],
+      "spawn_egg": {
+        "base_color": "#ffffffff",
+        "overlay_color": "#ffe2dd44"
+      }
+    }
+  }
+}
