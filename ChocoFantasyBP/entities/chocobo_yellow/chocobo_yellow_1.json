@@ -105,10 +105,7 @@
       "minecraft:movement.basic": {},
       "minecraft:jump.static": {},
       "minecraft:horse.jump_strength": {
-        "value": {
-          "range_min": 0.4,
-          "range_max": 1.0
-        }
+        "value": 0
       },
       "minecraft:can_climb": {},
       "minecraft:behavior.float": {
