@@ -12,18 +12,18 @@
         "saddle": "textures/entity/chocobos/chocobo_saddle"
       },
       "geometry": {
-        "default": "geometry.chocobos",
-        "saddle": "geometry.chocobos_saddle"
+        "default": "geometry.cf_chocobo",
+        "saddle": "geometry.cf_chocobo_saddle"
       },
       "animations": {
-        "staticking": "animation.chocobo.static",
-        "moving": "animation.chocobo.move",
-        "flying": "animation.chocobo.fly",
-        "sitting": "animation.chocobo.sit",
-        "static": "controller.animation.chocobo.static",
-        "move": "controller.animation.chocobo.move",
-        "fly": "controller.animation.chocobo.fly",
-        "sit": "controller.animation.chocobo.sit"
+        "staticking": "animation.cf_chocobo.static",
+        "moving": "animation.cf_chocobo.move",
+        "flying": "animation.cf_chocobo.fly",
+        "sitting": "animation.cf_chocobo.sit",
+        "static": "controller.animation.cf_chocobo.static",
+        "move": "controller.animation.cf_chocobo.move",
+        "fly": "controller.animation.cf_chocobo.fly",
+        "sit": "controller.animation.cf_chocobo.sit"
       },
       "scripts": {
         "animate": [

@@ -1,10 +1,13 @@
 {
-  "format_version" : "1.10.0",
-  "animation_controllers" : {
-  "controller.animation.chocobo.death" : {
-    "initial_state" : "default",
-    "states" : {      "default" : {
-        "animations" : [ "staticking" ]
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.cf_chocobo.death": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "animations": [
+            "staticking"
+          ]
         }
       }
     }

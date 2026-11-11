@@ -1,7 +1,7 @@
 {
   "format_version": "1.10.0",
   "animation_controllers": {
-    "controller.animation.chocobo.move": {
+    "controller.animation.cf_chocobo.move": {
       "initial_state": "default",
       "states": {
         "default": {
@@ -9,8 +9,8 @@
             "move_speed": {
               "input": "query.ground_speed * query.is_on_ground",
               "remap_curve": {
-                "0.0": 0.0,
-                "0.25": 1.0
+                "0.0": 0,
+                "0.25": 1
               }
             }
           },
@@ -22,7 +22,7 @@
         }
       }
     },
-    "controller.animation.chocobo.static": {
+    "controller.animation.cf_chocobo.static": {
       "initial_state": "default",
       "states": {
         "default": {
@@ -34,7 +34,7 @@
         }
       }
     },
-    "controller.animation.chocobo.fly": {
+    "controller.animation.cf_chocobo.fly": {
       "initial_state": "default",
       "states": {
         "default": {
@@ -46,7 +46,7 @@
         }
       }
     },
-    "controller.animation.chocobo.sit": {
+    "controller.animation.cf_chocobo.sit": {
       "initial_state": "default",
       "states": {
         "default": {

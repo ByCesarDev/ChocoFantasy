@@ -12,11 +12,11 @@
         "angry": "textures/entity/chocobos/chocobo_yellow_1"
       },
       "geometry": {
-        "default": "geometry.chocobos"
+        "default": "geometry.cf_chocobo"
       },
       "animations": {
-        "staticking": "animation.chocobo.death",
-        "static": "controller.animation.chocobo.death"
+        "staticking": "animation.cf_chocobo.death",
+        "static": "controller.animation.cf_chocobo.death"
       },
       "scripts": {
         "animate": [
