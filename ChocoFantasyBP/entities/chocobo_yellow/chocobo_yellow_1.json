@@ -5,19 +5,7 @@
       "identifier": "cf:chocobo_yellow_1",
       "is_spawnable": true,
       "is_summonable": true,
-      "is_experimental": false,
-      "scripts": {
-        "animate": [
-          "fly_logic",
-          "riding",
-          "fly_cleanup"
-        ]
-      },
-      "animations": {
-        "fly_logic": "controller.animation.chocobo.fly_logic",
-        "riding": "controller.animation.chocobo.riding",
-        "fly_cleanup": "controller.animation.chocobo.fly_cleanup"
-      }
+      "is_experimental": false
     },
     "components": {
       "minecraft:rideable": {
@@ -315,6 +303,30 @@
       "cf:chocobo_mount_start": {
         "add": {
           "component_groups": [
+            "cf:chocobo_ground"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "cf:chocobo_air"
+          ]
+        }
+      },
+      "cf:chocobo_mount_end": {
+        "add": {
+          "component_groups": [
+            "cf:chocobo_ground"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "cf:chocobo_air"
+          ]
+        }
+      },
+      "cf:chocobo_start_flying": {
+        "add": {
+          "component_groups": [
             "cf:chocobo_air"
           ]
         },
@@ -324,7 +336,7 @@
           ]
         }
       },
-      "cf:chocobo_mount_end": {
+      "cf:chocobo_stop_flying": {
         "add": {
           "component_groups": [
             "cf:chocobo_ground"
