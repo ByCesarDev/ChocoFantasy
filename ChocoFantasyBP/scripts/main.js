@@ -7,13 +7,26 @@ const CHOCOBO_IDENTIFIER = "cf:chocobo_yellow_1";
 const HORIZONTAL_SPEED = 0.40;   // Velocidad horizontal en el aire (bloques/tick aprox.)
 const ASCENT_SPEED = 0.30;       // Velocidad de ascenso vertical constante
 const INERTIA_DAMPING = 0.85;    // Factor de amortiguación cuando no hay input de WASD
-const MIN_TICKS_BEFORE_LANDING = 5; // Ticks mínimos en el aire antes de considerar aterrizaje (evita cancelación al despegar)
 
 // ==========================================
 // ESTADO DE VUELO DE LAS MONTURAS
-// Map<string, { state: "ASCENDING" | "DESCENDING", ticksInAir: number }>
+// Map<string, { state: "ASCENDING" | "DESCENDING", hasLeftGround: boolean }>
 // ==========================================
 const flightStates = new Map();
+
+/**
+ * Valida si la montura cumple todos los requisitos indispensables para volar:
+ * 1. Existir y ser válida.
+ * 2. Ser un Chocobo amarillo (cf:chocobo_yellow_1).
+ * 3. Estar domesticada (minecraft:is_tamed).
+ * 4. Tener silla de montar equipada (minecraft:is_saddled).
+ */
+function canFly(mount) {
+    if (!mount || !mount.isValid() || mount.typeId !== CHOCOBO_IDENTIFIER) {
+        return false;
+    }
+    return mount.hasComponent("minecraft:is_tamed") && mount.hasComponent("minecraft:is_saddled");
+}
 
 // ==========================================
 // GESTIÓN DE EVENTOS DE ENTRADA (BOTÓN SALTO)
@@ -26,14 +39,16 @@ world.afterEvents.playerButtonInput.subscribe((event) => {
     try {
         const riding = player.getComponent("minecraft:riding");
         const mount = riding?.entityRidingOn;
-        if (!mount || !mount.isValid() || mount.typeId !== CHOCOBO_IDENTIFIER) return;
+
+        // Si no cumple las condiciones de Chocobo domesticado + ensillado, no permitimos volar
+        if (!canFly(mount)) return;
 
         if (newButtonState === ButtonState.Pressed) {
             // Iniciar o reanudar ascenso en el aire
             const current = flightStates.get(mount.id);
             flightStates.set(mount.id, {
                 state: "ASCENDING",
-                ticksInAir: current ? current.ticksInAir : 0
+                hasLeftGround: current ? current.hasLeftGround : false
             });
             mount.triggerEvent("cf:chocobo_start_flying");
         } else if (newButtonState === ButtonState.Released) {
@@ -85,11 +100,23 @@ system.runInterval(() => {
             // Si no está registrado en vuelo, está en modo terrestre nativo
             if (!flightData) continue;
 
-            flightData.ticksInAir++;
+            // Validación estricta en vuelo: si pierde la silla o se des-domestica en el aire
+            if (!canFly(mount)) {
+                mount.clearVelocity();
+                mount.triggerEvent("cf:chocobo_stop_flying");
+                flightStates.delete(mount.id);
+                continue;
+            }
+
+            // Registrar cuándo realmente abandona el suelo
+            if (!mount.isOnGround) {
+                flightData.hasLeftGround = true;
+            }
 
             // Detección de aterrizaje confirmado:
-            // Solo aterriza si el Chocobo está en el suelo y ya pasaron los ticks de despegue
-            if (mount.isOnGround && flightData.ticksInAir > MIN_TICKS_BEFORE_LANDING) {
+            // Solo aterriza si el Chocobo ya estuvo en el aire y ha vuelto a tocar el suelo
+            if (mount.isOnGround && flightData.hasLeftGround) {
+                mount.clearVelocity();
                 mount.triggerEvent("cf:chocobo_stop_flying");
                 flightStates.delete(mount.id);
                 continue;

@@ -299,30 +299,50 @@
         }
       },
       "cf:chocobo_mount_start": {
-        "add": {
-          "component_groups": [
-            "cf:chocobo_ground"
-          ]
-        },
-        "remove": {
-          "component_groups": [
-            "cf:chocobo_air",
-            "cf:chocobo_descend"
-          ]
-        }
+        "sequence": [
+          {
+            "remove": {
+              "component_groups": [
+                "cf:chocobo_air",
+                "cf:chocobo_descend"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "has_component",
+              "value": "minecraft:is_saddled"
+            },
+            "add": {
+              "component_groups": [
+                "cf:chocobo_ground"
+              ]
+            }
+          }
+        ]
       },
       "cf:chocobo_mount_end": {
-        "add": {
-          "component_groups": [
-            "cf:chocobo_ground"
-          ]
-        },
-        "remove": {
-          "component_groups": [
-            "cf:chocobo_air",
-            "cf:chocobo_descend"
-          ]
-        }
+        "sequence": [
+          {
+            "remove": {
+              "component_groups": [
+                "cf:chocobo_air",
+                "cf:chocobo_descend"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "has_component",
+              "value": "minecraft:is_saddled"
+            },
+            "add": {
+              "component_groups": [
+                "cf:chocobo_ground"
+              ]
+            }
+          }
+        ]
       },
       "cf:chocobo_start_flying": {
         "add": {
