@@ -163,10 +163,6 @@
         "minecraft:physics": {
           "has_gravity": false,
           "has_collision": true
-        },
-        "minecraft:input_ground_controlled": {},
-        "minecraft:vertical_movement_action": {
-          "vertical_velocity": 0.3
         }
       },
       "cf:chocobo_levitation": {
