@@ -1,7 +1,9 @@
-$localMojang = "CC:\Users\Usuario\AppData\Roaming\levilauncher.exe\versions\1.26.60.05\Minecraft Bedrock\Users\Shared\games\com.mojang"
+$localMojang = "$env:APPDATA\levilauncher.exe\versions\1.26.60.05\Minecraft Bedrock\Users\Shared\games\com.mojang"
+$standardMojang = "$env:LOCALAPPDATA\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang"
 
 $comMojangPaths = @()
 if (Test-Path $localMojang) { $comMojangPaths += $localMojang }
+if (Test-Path $standardMojang) { $comMojangPaths += $standardMojang }
 
 if ($comMojangPaths.Count -eq 0) {
     Write-Error "No com.mojang folder found in Roaming or LocalAppData!"
