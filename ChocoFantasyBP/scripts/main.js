@@ -22,7 +22,7 @@ const INERTIA_DAMPING = 0.85;          // Factor de amortiguación al soltar WAS
 
 // ==========================================
 // ESTADO DE VUELO DE LAS MONTURAS
-// Map<string, { state: "ASCENDING" | "DESCENDING", hasLeftGround: boolean }>
+// Map<string, { state: "ASCENDING" | "HOVERING" | "DESCENDING", hasLeftGround: boolean, hoverY?: number, pressStartY?: number }>
 // ==========================================
 const flightStates = new Map();
 const playerRidingTracker = new Map();
@@ -94,18 +94,21 @@ world.afterEvents.playerButtonInput.subscribe((event) => {
         const currentTick = system.currentTick;
 
         if (isPressed) {
-            // Registrar momento de pulsación para medir si fue un tap o si se mantiene
+            // Registrar momento y altura exacta de pulsación para medir si fue un tap o si se mantiene
+            const currentY = mount.location.y;
             if (!flightData) {
                 flightData = {
                     state: "ASCENDING",
                     hasLeftGround: false,
                     jumpPressTick: currentTick,
+                    pressStartY: currentY,
                     prevStateBeforePress: "GROUND"
                 };
                 flightStates.set(mount.id, flightData);
             } else {
                 flightData.prevStateBeforePress = flightData.state;
                 flightData.jumpPressTick = currentTick;
+                flightData.pressStartY = currentY;
                 flightData.state = "ASCENDING";
                 flightData.hoverY = undefined; // Descongelar altura al subir
             }
@@ -130,8 +133,9 @@ world.afterEvents.playerButtonInput.subscribe((event) => {
                 } else {
                     // Si estaba descendiendo o en otra maniobra -> Un toque activa SUSPENSIÓN ESTÁTICA
                     flightData.state = "HOVERING";
-                    flightData.hoverY = mount.location.y;
-                    console.warn(`[ChocoDebug] [Tap] ¡Modo Suspensión ACTIVADO! Altitud Y congelada en: ${flightData.hoverY.toFixed(1)}`);
+                    // Fijar exactamente la altitud de cuando se presionó el botón (no la ganada durante los ticks del tap)
+                    flightData.hoverY = flightData.pressStartY ?? mount.location.y;
+                    console.warn(`[ChocoDebug] [Tap] ¡Modo Suspensión ACTIVADO! Altitud Y congelada exactamente en: ${flightData.hoverY.toFixed(1)}`);
                     mount.triggerEvent("cf:chocobo_start_flying"); // Sin gravedad vanilla para flotar limpio
                 }
             } else {
@@ -224,7 +228,7 @@ system.runInterval(() => {
             const forwardPressed = moveVec.y > 0.5;
             const currentTick = system.currentTick;
             if (forwardPressed && !flightData.wasForwardPressed) {
-                if (flightData.lastForwardPressTick && (currentTick - flightData.lastForwardPressTick) <= 8) {
+                if (flightData.lastForwardPressTick && (currentTick - flightData.lastForwardPressTick) <= 10) {
                     flightData.isBoostActive = true;
                 }
                 flightData.lastForwardPressTick = currentTick;
@@ -246,32 +250,37 @@ system.runInterval(() => {
                 const rightX = Math.cos(yawRad);
                 const rightZ = Math.sin(yawRad);
 
-                // Combinación WASD: W/S sobre fwd, A/D sobre right
-                let dirX = fwdX * moveVec.y + rightX * moveVec.x;
-                let dirZ = fwdZ * moveVec.y + rightZ * moveVec.x;
-
-                // Normalización de diagonales
-                const len = Math.hypot(dirX, dirZ);
-                if (len > 1) {
-                    dirX /= len;
-                    dirZ /= len;
-                }
-
-                // Velocidad horizontal base (Crucero vs Sprint Doble W) + Impulso extra de picado
-                let horizontalSpeed = isSprinting ? SPRINT_HORIZONTAL_SPEED : CRUISE_HORIZONTAL_SPEED;
-                if (pitch > 20) {
-                    const diveBoost = Math.min((pitch - 20) / 45, 1) * 0.80;
-                    horizontalSpeed += diveBoost;
-                }
-
-                // Freno Aéreo Activo si se presiona S (retroceso en vuelo)
+                // Freno Aéreo Activo: Si se presiona S (retroceso en vuelo)
+                // Disipa activamente la velocidad horizontal actual (frenada en seco sin empujar en reversa)
                 if (moveVec.y < -0.3) {
-                    horizontalSpeed = 0.35;
+                    targetVx = currentVel.x * 0.35;
+                    targetVz = currentVel.z * 0.35;
                     if (flightData.lastHMode !== "AIR_BRAKE") {
                         flightData.lastHMode = "AIR_BRAKE";
                         console.warn(`[ChocoDebug] [Freno] Freno Aéreo Activo (Tecla S)`);
                     }
                 } else {
+                    // Combinación WASD: W/S sobre fwd, A/D sobre right
+                    let dirX = fwdX * moveVec.y + rightX * moveVec.x;
+                    let dirZ = fwdZ * moveVec.y + rightZ * moveVec.x;
+
+                    // Normalización de diagonales
+                    const len = Math.hypot(dirX, dirZ);
+                    if (len > 1) {
+                        dirX /= len;
+                        dirZ /= len;
+                    }
+
+                    // Velocidad horizontal base (Crucero vs Sprint Doble W) + Impulso extra de picado
+                    let horizontalSpeed = isSprinting ? SPRINT_HORIZONTAL_SPEED : CRUISE_HORIZONTAL_SPEED;
+                    if (pitch > 20) {
+                        const diveBoost = Math.min((pitch - 20) / 45, 1) * 0.80;
+                        horizontalSpeed += diveBoost;
+                    }
+
+                    targetVx = dirX * horizontalSpeed;
+                    targetVz = dirZ * horizontalSpeed;
+
                     // Logs dinámicos para Caso 2 (Crucero vs Sprint)
                     const hMode = isSprinting ? "SPRINT_AIR" : "CRUISE_AIR";
                     if (flightData.lastHMode !== hMode) {
@@ -283,9 +292,6 @@ system.runInterval(() => {
                         }
                     }
                 }
-
-                targetVx = dirX * horizontalSpeed;
-                targetVz = dirZ * horizontalSpeed;
 
                 // Orientar cuerpo del Chocobo al Yaw del jugador
                 mount.setRotation({ x: 0, y: yaw });
@@ -370,8 +376,8 @@ system.runInterval(() => {
                 y: targetVy,
                 z: targetVz
             });
-        } catch {
-            // Protección contra errores en tiempo de ejecución
+        } catch (err) {
+            console.warn(`[ChocoDebug Error Loop] ${err}`);
         }
     }
 }, 1);
