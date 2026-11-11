@@ -12,38 +12,43 @@ if ($comMojangPaths.Count -eq 0) {
 
 $repo = $PSScriptRoot
 
-foreach ($comMojang in $comMojangPaths) {
-    Write-Host "Creating links in: $comMojang" -ForegroundColor Cyan
-
-    # Behavior Pack Link
-    $bpTarget = Join-Path $comMojang "development_behavior_packs\ChocoFantasyBP"
-    $bpSource = Join-Path $repo "ChocoFantasyBP"
-
-    if (Test-Path $bpTarget) {
-        Write-Host "  Behavior Pack link already exists at: $bpTarget" -ForegroundColor Yellow
-    } else {
-        try {
-            New-Item -ItemType SymbolicLink -Path $bpTarget -Value $bpSource -ErrorAction Stop | Out-Null
-            Write-Host "  Created BP SymbolicLink: $bpTarget -> $bpSource" -ForegroundColor Green
-        } catch {
-            New-Item -ItemType Junction -Path $bpTarget -Value $bpSource | Out-Null
-            Write-Host "  Created BP Junction: $bpTarget -> $bpSource" -ForegroundColor Green
+function Create-LinkOrJunction($target, $source, $label) {
+    $item = Get-Item -LiteralPath $target -ErrorAction SilentlyContinue
+    if ($item) {
+        if ($item.LinkType -and ($item.Target -contains $source)) {
+            Write-Host "  $label is already correctly linked to: $source" -ForegroundColor Green
+            return
+        } else {
+            Write-Host "  $label exists as a regular folder or outdated link. Replacing with junction..." -ForegroundColor Yellow
+            Remove-Item -LiteralPath $target -Recurse -Force -ErrorAction Stop
         }
     }
 
-    # Resource Pack Link
-    $rpTarget = Join-Path $comMojang "development_resource_packs\ChocoFantasyRP"
-    $rpSource = Join-Path $repo "ChocoFantasyRP"
+    # Ensure parent folder exists
+    $parent = Split-Path -Path $target -Parent
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
 
-    if (Test-Path $rpTarget) {
-        Write-Host "  Resource Pack link already exists at: $rpTarget" -ForegroundColor Yellow
-    } else {
-        try {
-            New-Item -ItemType SymbolicLink -Path $rpTarget -Value $rpSource -ErrorAction Stop | Out-Null
-            Write-Host "  Created RP SymbolicLink: $rpTarget -> $rpSource" -ForegroundColor Green
-        } catch {
-            New-Item -ItemType Junction -Path $rpTarget -Value $rpSource | Out-Null
-            Write-Host "  Created RP Junction: $rpTarget -> $rpSource" -ForegroundColor Green
-        }
+    try {
+        New-Item -ItemType SymbolicLink -Path $target -Value $source -ErrorAction Stop | Out-Null
+        Write-Host "  Created $label SymbolicLink: $target -> $source" -ForegroundColor Green
+    } catch {
+        New-Item -ItemType Junction -Path $target -Value $source -ErrorAction Stop | Out-Null
+        Write-Host "  Created $label Junction: $target -> $source" -ForegroundColor Green
     }
 }
+
+foreach ($comMojang in $comMojangPaths) {
+    Write-Host "Linking packs in: $comMojang" -ForegroundColor Cyan
+
+    $bpTarget = Join-Path $comMojang "development_behavior_packs\ChocoFantasyBP"
+    $bpSource = Join-Path $repo "ChocoFantasyBP"
+    Create-LinkOrJunction -target $bpTarget -source $bpSource -label "Behavior Pack"
+
+    $rpTarget = Join-Path $comMojang "development_resource_packs\ChocoFantasyRP"
+    $rpSource = Join-Path $repo "ChocoFantasyRP"
+    Create-LinkOrJunction -target $rpTarget -source $rpSource -label "Resource Pack"
+}
+
+Write-Host "`nAll links created and verified successfully!" -ForegroundColor Green

@@ -23,7 +23,7 @@ const playerRidingTracker = new Map();
  * 4. Tener silla de montar equipada (minecraft:is_saddled).
  */
 function canFly(mount) {
-    if (!mount || !mount.isValid() || mount.typeId !== CHOCOBO_IDENTIFIER) {
+    if (!mount || !mount.isValid || mount.typeId !== CHOCOBO_IDENTIFIER) {
         return false;
     }
     const isTamed = mount.hasComponent("minecraft:is_tamed");
@@ -46,10 +46,9 @@ system.runInterval(() => {
                 const isTamed = mount.hasComponent("minecraft:is_tamed");
                 const isSaddled = mount.hasComponent("minecraft:is_saddled");
                 const canPowerJump = mount.hasComponent("minecraft:can_power_jump");
-                player.sendMessage(`§a[ChocoDebug] Te has MONTADO en: ${mount.typeId}`);
-                player.sendMessage(`§7[ChocoDebug] is_tamed: ${isTamed} | is_saddled: ${isSaddled} | can_power_jump: ${canPowerJump}`);
+                console.warn(`[ChocoDebug] Montado en: ${mount.typeId} | is_tamed: ${isTamed} | is_saddled: ${isSaddled} | can_power_jump: ${canPowerJump}`);
             } else if (wasRiding && !isRiding) {
-                player.sendMessage(`§c[ChocoDebug] Evento detectado: ¡TE HAS DESMONTADO!`);
+                console.warn(`[ChocoDebug] Evento: Jugador desmontado.`);
             }
 
             playerRidingTracker.set(player.id, isRiding);
@@ -70,10 +69,10 @@ world.afterEvents.playerButtonInput.subscribe((event) => {
         const mount = riding?.entityRidingOn;
 
         const isPressed = newButtonState === ButtonState.Pressed;
-        player.sendMessage(`§e[ChocoDebug] Botón SALTO: ${isPressed ? "PRESIONADO" : "LIBERADO"}`);
+        console.warn(`[ChocoDebug] Boton SALTO: ${isPressed ? "PRESIONADO" : "LIBERADO"}`);
 
         if (!mount) {
-            player.sendMessage(`§c[ChocoDebug] Salto detectado pero NO estás montando ninguna entidad.`);
+            console.warn(`[ChocoDebug] Salto detectado pero NO esta montando ninguna entidad.`);
             return;
         }
 
@@ -82,13 +81,13 @@ world.afterEvents.playerButtonInput.subscribe((event) => {
         const canPowerJump = mount.hasComponent("minecraft:can_power_jump");
         const flyable = canFly(mount);
 
-        player.sendMessage(`§7[ChocoDebug] Montura: ${mount.typeId} | Tamed: ${isTamed} | Saddled: ${isSaddled} | PowerJump: ${canPowerJump} | canFly: ${flyable}`);
+        console.warn(`[ChocoDebug] Montura: ${mount.typeId} | Tamed: ${isTamed} | Saddled: ${isSaddled} | PowerJump: ${canPowerJump} | canFly: ${flyable}`);
 
         if (!flyable) {
             let razon = "";
-            if (!isTamed) razon += "NO está domesticado. ";
+            if (!isTamed) razon += "NO esta domesticado. ";
             if (!isSaddled) razon += "NO tiene silla puesta. ";
-            player.sendMessage(`§c[ChocoDebug] Vuelo denegado: ${razon}`);
+            console.warn(`[ChocoDebug] Vuelo denegado: ${razon}`);
             return;
         }
 
@@ -99,14 +98,14 @@ world.afterEvents.playerButtonInput.subscribe((event) => {
                 state: "ASCENDING",
                 hasLeftGround: current ? current.hasLeftGround : false
             });
-            player.sendMessage(`§a[ChocoDebug] ¡Activando cf:chocobo_start_flying! Estado: ASCENDING`);
+            console.warn(`[ChocoDebug] Disparando cf:chocobo_start_flying (ASCENDING)`);
             mount.triggerEvent("cf:chocobo_start_flying");
         } else {
             // Liberar salto NO aterriza el Chocobo: entra en modo descenso manteniendo control aéreo
             const current = flightStates.get(mount.id);
             if (current) {
                 current.state = "DESCENDING";
-                player.sendMessage(`§6[ChocoDebug] ¡Activando cf:chocobo_start_descending! Estado: DESCENDING`);
+                console.warn(`[ChocoDebug] Disparando cf:chocobo_start_descending (DESCENDING)`);
                 mount.triggerEvent("cf:chocobo_start_descending");
             }
         }
@@ -140,11 +139,11 @@ system.runInterval(() => {
     // 2. Procesamiento de jugadores volando
     for (const player of world.getAllPlayers()) {
         try {
-            if (!player || !player.isValid()) continue;
+            if (!player || !player.isValid) continue;
 
             const riding = player.getComponent("minecraft:riding");
             const mount = riding?.entityRidingOn;
-            if (!mount || !mount.isValid() || mount.typeId !== CHOCOBO_IDENTIFIER) continue;
+            if (!mount || !mount.isValid || mount.typeId !== CHOCOBO_IDENTIFIER) continue;
 
             const flightData = flightStates.get(mount.id);
 
@@ -153,7 +152,7 @@ system.runInterval(() => {
 
             // Validación estricta en vuelo: si pierde la silla o se des-domestica en el aire
             if (!canFly(mount)) {
-                player.sendMessage(`§c[ChocoDebug] Perdió requisitos de vuelo en el aire. Cancelando...`);
+                console.warn(`[ChocoDebug] Perdio requisitos de vuelo en el aire. Cancelando...`);
                 mount.clearVelocity();
                 mount.triggerEvent("cf:chocobo_stop_flying");
                 flightStates.delete(mount.id);
@@ -163,13 +162,13 @@ system.runInterval(() => {
             // Registrar cuándo realmente abandona el suelo
             if (!mount.isOnGround && !flightData.hasLeftGround) {
                 flightData.hasLeftGround = true;
-                player.sendMessage(`§b[ChocoDebug] ¡Chocobo despegó del suelo! (hasLeftGround = true)`);
+                console.warn(`[ChocoDebug] Chocobo despego del suelo (hasLeftGround = true)`);
             }
 
             // Detección de aterrizaje confirmado:
             // Solo aterriza si el Chocobo ya estuvo en el aire y ha vuelto a tocar el suelo
             if (mount.isOnGround && flightData.hasLeftGround) {
-                player.sendMessage(`§e[ChocoDebug] ¡Aterrizaje confirmado! Restaurando controles terrestres.`);
+                console.warn(`[ChocoDebug] Aterrizaje confirmado. Restaurando controles terrestres.`);
                 mount.clearVelocity();
                 mount.triggerEvent("cf:chocobo_stop_flying");
                 flightStates.delete(mount.id);

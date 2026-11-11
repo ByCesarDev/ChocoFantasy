@@ -160,8 +160,7 @@
           "has_gravity": true,
           "has_collision": true
         },
-        "minecraft:input_ground_controlled": {},
-        "minecraft:behavior.player_ride_tamed": {}
+        "minecraft:input_ground_controlled": {}
       },
       "cf:chocobo_air": {
         "minecraft:physics": {
@@ -254,7 +253,8 @@
       },
       "minecraft:chocobo_saddled": {
         "minecraft:is_saddled": {},
-        "minecraft:can_power_jump": {}
+        "minecraft:can_power_jump": {},
+        "minecraft:behavior.player_ride_tamed": {}
       }
     },
     "events": {
