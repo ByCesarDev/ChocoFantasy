@@ -1,0 +1,29 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "cf:chocopedia"
+    },
+    "tags": [ "crafting_table" ],
+    "ingredients": [
+      {
+        "item": "minecraft:book",
+        "count": 1
+      },
+      {
+        "item": "cf:reagan",
+        "count": 1
+      }
+    ],
+    "unlock": [
+      {
+        "item": "cf:reagan"
+      }
+    ],
+    "result": {
+      "item": "cf:chocopedia",
+      "count": 1
+    }
+  }
+}
+

@@ -1,0 +1,29 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shapeless": {
+    "description": {
+      "identifier": "cf:chocobo_whistle"
+    },
+    "tags": [ "crafting_table" ],
+    "ingredients": [
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1
+      },
+      {
+        "item": "minecraft:feather",
+        "count": 1
+      }
+    ],
+    "unlock": [
+      {
+        "item": "minecraft:gold_ingot"
+      }
+    ],
+    "result": {
+      "item": "cf:chocobo_whistle",
+      "count": 1
+    }
+  }
+}
+

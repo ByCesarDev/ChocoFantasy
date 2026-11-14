@@ -37,6 +37,12 @@
     },
     "raw_chocobo_meat": {
       "textures": "textures/items/raw_chocobo_meat"
+    },
+    "chocobo_whistle": {
+      "textures": "textures/items/chocobo_whistle"
+    },
+    "chocopedia": {
+      "textures": "textures/items/chocopedia"
     }
   }
 }

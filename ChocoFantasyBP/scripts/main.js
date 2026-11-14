@@ -1,10 +1,21 @@
 import { world, system, InputButton, ButtonState } from "@minecraft/server";
+import { ActionFormData } from "@minecraft/server-ui";
 
 // ==========================================
 // CONFIGURACIÓN DE LINAJES Y ROLES DE CHOCOBO
 // ==========================================
 const CHOCOBO_TYPES = {
     "cf:chocobo_yellow_1": {
+        role: "SILVESTRE",
+        displayName: "Chocobo Amarillo Silvestre",
+        cruiseSpeed: 1.25,
+        sprintSpeed: 2.80,
+        normalAscent: 0.85,
+        sprintAscent: 1.30,
+        glideDescent: -0.05,
+        diveDescent: -1.20
+    },
+    "cf:chocobo_yellow": {
         role: "SILVESTRE",
         displayName: "Chocobo Amarillo Silvestre",
         cruiseSpeed: 1.25,
@@ -23,7 +34,7 @@ const CHOCOBO_TYPES = {
         sprintAscent: 1.25,
         glideDescent: -0.05,
         diveDescent: -1.15,
-        canCanopyRun: true // Corre y camina sobre copas de arboles / hojas
+        canCanopyRun: true
     },
     "cf:chocobo_blue": {
         role: "RIBERENO",
@@ -34,7 +45,7 @@ const CHOCOBO_TYPES = {
         sprintAscent: 1.25,
         glideDescent: -0.05,
         diveDescent: -1.20,
-        canHydroplane: true // Hidroplaneo sobre el agua con +40% de velocidad
+        canHydroplane: true
     },
     "cf:chocobo_black": {
         role: "CAVERNA",
@@ -45,7 +56,7 @@ const CHOCOBO_TYPES = {
         sprintAscent: 1.20,
         glideDescent: -0.06,
         diveDescent: -1.25,
-        grantsNightVision: true // Vision nocturna para el jinete
+        grantsNightVision: true
     },
     "cf:chocobo_purple": {
         role: "ABISAL",
@@ -56,7 +67,7 @@ const CHOCOBO_TYPES = {
         sprintAscent: 1.25,
         glideDescent: -0.05,
         diveDescent: -1.20,
-        grantsNightVision: true // Vision nocturna para el jinete
+        grantsNightVision: true
     },
     "cf:chocobo_white": {
         role: "CELESTIAL",
@@ -65,44 +76,41 @@ const CHOCOBO_TYPES = {
         sprintSpeed: 3.00,
         normalAscent: 0.90,
         sprintAscent: 1.40,
-        glideDescent: -0.02, // Sustentacion y planeo celestial extendido
+        glideDescent: -0.02,
         diveDescent: -1.20,
-        grantsRegen: true // Regeneracion en vuelo
+        grantsRegen: true
     },
     "cf:chocobo_gold": {
         role: "SOBERANO",
         displayName: "Chocobo Dorado Soberano",
-        cruiseSpeed: 1.50, // El rey supremo de la velocidad
-        sprintSpeed: 3.30, // Supersónico
+        cruiseSpeed: 1.50,
+        sprintSpeed: 3.30,
         normalAscent: 1.10,
         sprintAscent: 1.50,
         glideDescent: -0.04,
-        diveDescent: -1.50 // Super picado acelerado
+        diveDescent: -1.50
     }
 };
 
-const GRAVITY_DECEL = 0.12;     // Agilidad en la transición de velocidad vertical
-const INERTIA_DAMPING = 0.85;   // Factor de amortiguación al soltar WASD
-const TAP_TICK_THRESHOLD = 7;   // Umbral de ticks (~350ms) para Toque Corto (Tap)
+const GRAVITY_DECEL = 0.12;
+const INERTIA_DAMPING = 0.85;
+const TAP_TICK_THRESHOLD = 7;
 
-// Map<string, { state: "ASCENDING" | "HOVERING" | "DESCENDING", hasLeftGround: boolean, hoverY?: number, pressStartY?: number }>
+const COMMAND_STATES = ["follow", "sit", "wander"];
+const COMMAND_LABELS = {
+    "follow": "§a🐾 Modo: Seguir al Dueño",
+    "sit": "§c🛑 Modo: Sentado (Guardia)",
+    "wander": "§e🌾 Modo: Paseo Libre"
+};
+
 const flightStates = new Map();
 const playerRidingTracker = new Map();
 
-/**
- * Retorna la configuración del linaje del chocobo si es válido.
- */
 function getChocoboConfig(mount) {
     if (!mount || !mount.isValid) return null;
     return CHOCOBO_TYPES[mount.typeId] ?? null;
 }
 
-/**
- * Valida si la montura cumple todos los requisitos indispensables para volar:
- * 1. Existir y ser un Chocobo registrado.
- * 2. Estar domesticada (minecraft:is_tamed).
- * 3. Tener silla de montar equipada (minecraft:is_saddled).
- */
 function canFly(mount) {
     const config = getChocoboConfig(mount);
     if (!config) return false;
@@ -111,8 +119,263 @@ function canFly(mount) {
     return isTamed && isSaddled;
 }
 
+function getAbilityDescription(role) {
+    switch (role) {
+        case "FORESTAL":
+            return "Caminata sobre el dosel de hojas sin caerse. Inmunidad a bayas y espinas.";
+        case "RIBERENO":
+            return "Hidroplaneo sobre el agua (+40% de velocidad). Respira bajo el agua sin desmontar al jinete.";
+        case "CAVERNA":
+            return "Ojos brillantes: otorga Visión Nocturna natural al jinete. Amortigua vibraciones de sculk en cuevas.";
+        case "ABISAL":
+            return "Inmunidad total al daño por caída. Visión nocturna y gran altura de salto místico.";
+        case "CELESTIAL":
+            return "Sustentación pura con planeo casi horizontal. Regeneración de salud continua en vuelo.";
+        case "SOBERANO":
+            return "Velocidad crucero extrema (1.50) y sprint supersónico (3.30). 100% inmune a fuego y lava.";
+        default:
+            return "El todoterreno equilibrado para la exploración temprana del Overworld.";
+    }
+}
+
 // ==========================================
-// MONITOR DE MONTAJE / DESMONTAJE Y HABILIDADES PASIVAS
+// 1. CONTROL DE ÓRDENES POR SNEAK + CLIC & CHOCOPEDIA
+// ==========================================
+world.afterEvents.playerInteractWithEntity.subscribe((event) => {
+    try {
+        const { player, target } = event;
+        if (!target || !target.isValid) return;
+
+        const config = getChocoboConfig(target);
+        if (!config) return;
+
+        const equippable = player.getComponent("minecraft:equippable");
+        const itemInHand = equippable?.getEquipment("Mainhand");
+
+        // A. Abrir Ficha Técnica con la Chocopedia
+        if (itemInHand?.typeId === "cf:chocopedia") {
+            openChocoboProfileUI(player, target, config);
+            return;
+        }
+
+        // B. Ciclo de Órdenes por Sneak + Clic
+        if (player.isSneaking) {
+            const isTamed = target.hasComponent("minecraft:is_tamed");
+            if (!isTamed) return;
+
+            const tameable = target.getComponent("minecraft:tameable");
+            if (tameable?.tamedToPlayerId && tameable.tamedToPlayerId !== player.id) {
+                player.onScreenDisplay.setActionBar("§cEste Chocobo pertenece a otro aventurero.");
+                return;
+            }
+
+            const currentState = target.getProperty("cf:command_state") ?? "follow";
+            const currentIndex = COMMAND_STATES.indexOf(currentState);
+            const nextIndex = (currentIndex + 1) % COMMAND_STATES.length;
+            const nextState = COMMAND_STATES[nextIndex];
+
+            target.triggerEvent(`cf:command_${nextState}`);
+
+            // Sonido y aviso
+            const pitch = nextState === "sit" ? 0.8 : (nextState === "follow" ? 1.2 : 1.0);
+            player.playSound("entity.chocobo.ambient", { pitch });
+            player.onScreenDisplay.setActionBar(COMMAND_LABELS[nextState]);
+        }
+    } catch (err) {
+        console.warn(`[ChocoDebug Interact Error] ${err}`);
+    }
+});
+
+// ==========================================
+// 2. SILBATO MELÓDICO & GRIMORIO AL AIRE
+// ==========================================
+world.afterEvents.itemUse.subscribe((event) => {
+    try {
+        const { source: player, itemStack } = event;
+        if (!player || !player.isValid) return;
+
+        // Silbato de Chocobo: Llamada musical con arpegio
+        if (itemStack?.typeId === "cf:chocobo_whistle") {
+            const pitches = [0.8, 1.0, 1.25, 1.5];
+            for (let i = 0; i < pitches.length; i++) {
+                system.runTimeout(() => {
+                    if (player.isValid) {
+                        player.playSound("note.flute", { pitch: pitches[i], volume: 1.5 });
+                        player.dimension.spawnParticle("minecraft:note_particle", {
+                            x: player.location.x,
+                            y: player.location.y + 2.1,
+                            z: player.location.z
+                        });
+                    }
+                }, i * 3);
+            }
+
+            system.runTimeout(() => {
+                if (!player.isValid) return;
+
+                let count = 0;
+                const entities = player.dimension.getEntities({
+                    location: player.location,
+                    maxDistance: 48,
+                    families: ["chocobo"]
+                });
+
+                for (const choco of entities) {
+                    if (!choco.isValid) continue;
+                    const isTamed = choco.hasComponent("minecraft:is_tamed");
+                    const tameable = choco.getComponent("minecraft:tameable");
+
+                    if (isTamed && (!tameable?.tamedToPlayerId || tameable.tamedToPlayerId === player.id)) {
+                        count++;
+                        // Levantar si estaba sentado y poner a seguir
+                        choco.triggerEvent("cf:command_follow");
+
+                        choco.dimension.spawnParticle("minecraft:heart_particle", {
+                            x: choco.location.x,
+                            y: choco.location.y + 2.5,
+                            z: choco.location.z
+                        });
+
+                        // Impulso hacia el jinete
+                        const dx = player.location.x - choco.location.x;
+                        const dz = player.location.z - choco.location.z;
+                        const dist = Math.hypot(dx, dz);
+                        if (dist > 3) {
+                            choco.applyImpulse({
+                                x: (dx / dist) * 0.45,
+                                y: 0.25,
+                                z: (dz / dist) * 0.45
+                            });
+                        }
+                    }
+                }
+
+                if (count > 0) {
+                    player.onScreenDisplay.setActionBar(`§6🎺 ¡Silbato sonó! §e${count} Chocobo(s)§6 respondieron.`);
+                } else {
+                    player.onScreenDisplay.setActionBar("§e🎺 Tocaste el silbato, pero no hay Chocobos leales cerca.");
+                }
+            }, 12);
+        } else if (itemStack?.typeId === "cf:chocopedia") {
+            openGrimoireUI(player);
+        }
+    } catch (err) {
+        console.warn(`[ChocoDebug ItemUse Error] ${err}`);
+    }
+});
+
+// ==========================================
+// 3. INTERFACES DE USUARIO (ChocoWiki / Chocopedia)
+// ==========================================
+function openChocoboProfileUI(player, chocobo, config) {
+    const health = chocobo.getComponent("minecraft:health");
+    const currentHp = health ? Math.round(health.currentValue) : 40;
+    const maxHp = health ? Math.round(health.effectiveMax) : 40;
+    const currentState = chocobo.getProperty("cf:command_state") ?? "follow";
+    const name = chocobo.nameTag || config.displayName;
+
+    const form = new ActionFormData()
+        .title(`§6📜 Perfil: ${name}`)
+        .body(
+            `§eLinaje: §f${config.displayName}\n` +
+            `§cSalud: §f${currentHp} / ${maxHp} HP\n` +
+            `§aVelocidad Crucero: §f${config.cruiseSpeed}\n` +
+            `§bSprint Aéreo: §f${config.sprintSpeed}\n` +
+            `§dEstado Actual: §f${COMMAND_LABELS[currentState] || currentState}\n\n` +
+            `§6★ Habilidad Especial:\n§7${getAbilityDescription(config.role)}`
+        )
+        .button("§a🐾 Ordenar: Seguir")
+        .button("§c🛑 Ordenar: Sentar")
+        .button("§e🌾 Ordenar: Pasear")
+        .button("§8Cerrar");
+
+    form.show(player).then((res) => {
+        if (res.canceled) return;
+        if (res.selection === 0) {
+            chocobo.triggerEvent("cf:command_follow");
+            player.onScreenDisplay.setActionBar(COMMAND_LABELS["follow"]);
+        } else if (res.selection === 1) {
+            chocobo.triggerEvent("cf:command_sit");
+            player.onScreenDisplay.setActionBar(COMMAND_LABELS["sit"]);
+        } else if (res.selection === 2) {
+            chocobo.triggerEvent("cf:command_wander");
+            player.onScreenDisplay.setActionBar(COMMAND_LABELS["wander"]);
+        }
+    });
+}
+
+function openGrimoireUI(player) {
+    const form = new ActionFormData()
+        .title("§6📖 ChocoWiki: Grimorio de Linajes")
+        .body("§fBienvenido a la enciclopedia viva de ChocoFantasy. Selecciona un linaje para consultar sus habilidades y secretos de crianza:")
+        .button("🌿 Chocobo Forestal")
+        .button("🌊 Chocobo Ribereño")
+        .button("🌑 Chocobo de Caverna")
+        .button("🔮 Chocobo Abisal")
+        .button("❄️ Chocobo Celestial")
+        .button("☀️ Chocobo Soberano")
+        .button("🌾 Chocobo Silvestre")
+        .button("🥗 Guía Nutricional");
+
+    form.show(player).then((res) => {
+        if (res.canceled) return;
+        showLinajeDetail(player, res.selection);
+    });
+}
+
+function showLinajeDetail(player, index) {
+    const details = [
+        {
+            title: "🌿 Chocobo Forestal",
+            text: "§aHábitat: §fSelvas y bosques frondosos.\n§bHabilidad: §fCaminata en copas de árboles. Camina y corre sobre bloques de hojas sin caerse.\n§cInmunidad: §fInmune al daño de espinas, arbustos de bayas y cactus."
+        },
+        {
+            title: "🌊 Chocobo Ribereño",
+            text: "§aHábitat: §fRíos, playas y costas oceánicas.\n§bHabilidad: §fHidroplaneo. Se desliza sobre la superficie del agua a +40% de velocidad con estelas de espuma.\n§cRespiración: §fRespira bajo el agua y nunca desmonta al jinete."
+        },
+        {
+            title: "🌑 Chocobo de Caverna",
+            text: "§aHábitat: §fCuevas profundas, deepslate y dripstone.\n§bHabilidad: §fOjos brillantes bioluminiscentes. Otorga Visión Nocturna natural al jinete mientras esté montado.\n§cDefensa: §f50 HP blindados e inmunidad a caídas."
+        },
+        {
+            title: "🔮 Chocobo Abisal",
+            text: "§aHábitat: §fCuevas frondosas (Lush Caves) y pantanos oscuros.\n§bHabilidad: §fSalto místico amplificado y Visión Nocturna al jinete.\n§cDefensa: §fInmunidad total al daño de caída."
+        },
+        {
+            title: "❄️ Chocobo Celestial",
+            text: "§aHábitat: §fPicos nevados y cumbres heladas.\n§bHabilidad: §fSustentación celestial. Planeo extendido casi horizontal (-0.02) y regeneración de vida continua en vuelo."
+        },
+        {
+            title: "☀️ Chocobo Soberano",
+            text: "§aHábitat: §fMesetas doradas, badlands y praderas abiertas.\n§bHabilidad: §fVelocidad suprema de 1.50 y sprint supersónico de 3.30.\n§cResistencia: §f100% inmune a fuego y lava."
+        },
+        {
+            title: "🌾 Chocobo Silvestre",
+            text: "§aHábitat: §fLlanuras y sabanas del Overworld.\n§bHabilidad: §fEl todoterreno inicial. Vuelo equilibrado, gran lealtad y resistencia para explorar el mundo."
+        },
+        {
+            title: "🥗 Guía Nutricional Chocobo",
+            text: "§61. Verdura Gysahl: §fAlimento básico para atraer y criar en el nido de paja.\n§e2. Semillas de Reagan: §fTónico artesanal supremo (4 semillas). El único ítem que domestica al Chocobo adulto.\n§d3. Fruta de la Vida: §fSanación instantánea en combate y néctar celestial."
+        }
+    ];
+
+    const d = details[index];
+    if (!d) return;
+
+    const modal = new ActionFormData()
+        .title(d.title)
+        .body(d.text)
+        .button("§8Volver al Grimorio");
+
+    modal.show(player).then((res) => {
+        if (!res.canceled) {
+            openGrimoireUI(player);
+        }
+    });
+}
+
+// ==========================================
+// 4. BUCLE DE EFECTOS PASIVOS POR LINAJE
 // ==========================================
 system.runInterval(() => {
     for (const player of world.getAllPlayers()) {
@@ -123,26 +386,19 @@ system.runInterval(() => {
             const isRiding = !!mount;
             const config = getChocoboConfig(mount);
 
-            if (!wasRiding && isRiding && config) {
-                console.warn(`[ChocoDebug] Jinete montó en ${config.displayName} (${mount.typeId})`);
-            } else if (wasRiding && !isRiding) {
-                console.warn(`[ChocoDebug] Evento: Jugador desmontado.`);
-            }
-
-            // Habilidades pasivas continuas según el Linaje:
             if (isRiding && config) {
-                // 1. Chocobo de Caverna (Negro) y Abisal (Morado): Visión nocturna constante al jinete
+                // Visión nocturna en Caverna / Abisal
                 if (config.grantsNightVision) {
                     player.addEffect("night_vision", 220, { amplifier: 0, showParticles: false });
                 }
 
-                // 2. Chocobo Celestial (Blanco): Regeneración pasiva mientras cabalga o vuela
+                // Regeneración en Celestial
                 if (config.grantsRegen) {
                     player.addEffect("regeneration", 60, { amplifier: 0, showParticles: false });
                     mount.addEffect("regeneration", 60, { amplifier: 0, showParticles: false });
                 }
 
-                // 3. Chocobo Ribereño (Azul): Hidroplaneo sobre el agua
+                // Hidroplaneo en Ribereño
                 if (config.canHydroplane) {
                     try {
                         const loc = mount.location;
@@ -151,27 +407,24 @@ system.runInterval(() => {
                         const isWater = blockAtFeet?.typeId?.includes("water") || blockBelow?.typeId?.includes("water");
 
                         if (isWater) {
-                            // Hidroplaneo: Si está en agua y no está volando activamente, elevar a la superficie
                             const flightData = flightStates.get(mount.id);
                             if (!flightData || flightData.state !== "ASCENDING") {
                                 const waterSurfaceY = (blockAtFeet?.typeId?.includes("water") ? blockAtFeet.location.y : blockBelow.location.y) + 0.95;
                                 if (loc.y < waterSurfaceY) {
                                     mount.applyImpulse({ x: 0, y: 0.18, z: 0 });
                                 }
-                                // Partículas de estela de agua en las patas
                                 mount.dimension.spawnParticle("minecraft:water_splash_particle", { x: loc.x, y: loc.y + 0.1, z: loc.z });
                             }
                         }
                     } catch {}
                 }
 
-                // 4. Chocobo Forestal (Verde): Caminata sobre copas de hojas
+                // Caminata en follaje en Forestal
                 if (config.canCanopyRun) {
                     try {
                         const loc = mount.location;
                         const blockBelow = mount.dimension.getBlock({ x: loc.x, y: loc.y - 0.2, z: loc.z });
                         if (blockBelow?.typeId?.includes("leaves")) {
-                            // Si pisa hojas, sustentación suave para no caer en huecos del follaje
                             const flightData = flightStates.get(mount.id);
                             if (!flightData) {
                                 mount.applyImpulse({ x: 0, y: 0.08, z: 0 });
@@ -189,7 +442,7 @@ system.runInterval(() => {
 }, 5);
 
 // ==========================================
-// GESTIÓN DE EVENTOS DE ENTRADA (BOTÓN SALTO)
+// 5. GESTIÓN DE ENTRADA (BOTÓN SALTO / VUELO)
 // ==========================================
 world.afterEvents.playerButtonInput.subscribe((event) => {
     const { player, button, newButtonState } = event;
@@ -235,7 +488,6 @@ world.afterEvents.playerButtonInput.subscribe((event) => {
             const wasTap = pressDuration <= TAP_TICK_THRESHOLD;
 
             if (wasTap) {
-                // Toque corto: conmuta suspensión
                 if (flightData.prevStateBeforePress === "HOVERING") {
                     flightData.state = "DESCENDING";
                     flightData.hoverY = undefined;
@@ -246,7 +498,6 @@ world.afterEvents.playerButtonInput.subscribe((event) => {
                     mount.triggerEvent("cf:chocobo_start_flying");
                 }
             } else {
-                // Mantener y soltar: descenso / planeo
                 flightData.state = "DESCENDING";
                 flightData.hoverY = undefined;
                 mount.triggerEvent("cf:chocobo_start_descending");
@@ -258,10 +509,9 @@ world.afterEvents.playerButtonInput.subscribe((event) => {
 });
 
 // ==========================================
-// CONTROLADOR DE VUELO POR TICK (Script API)
+// 6. CONTROLADOR CINEMÁTICO DE VUELO POR TICK
 // ==========================================
 system.runInterval(() => {
-    // 1. Limpieza de monturas sin jinete
     if (flightStates.size > 0) {
         const activeMountIds = new Set();
         for (const player of world.getAllPlayers()) {
@@ -279,7 +529,6 @@ system.runInterval(() => {
         }
     }
 
-    // 2. Procesamiento de vuelo
     for (const player of world.getAllPlayers()) {
         try {
             if (!player || !player.isValid) continue;
@@ -305,7 +554,6 @@ system.runInterval(() => {
                 flightData.hasLeftGround = true;
             }
 
-            // Aterrizaje confirmado
             if (mount.isOnGround && flightData.hasLeftGround) {
                 mount.clearVelocity();
                 mount.triggerEvent("cf:chocobo_stop_flying");
@@ -325,7 +573,6 @@ system.runInterval(() => {
             const pitch = rot.x;
             const yawRad = (yaw * Math.PI) / 180;
 
-            // Sprint aéreo por doble toque a W
             const forwardPressed = moveVec.y > 0.5;
             const currentTick = system.currentTick;
             if (forwardPressed && !flightData.wasForwardPressed) {
@@ -350,7 +597,6 @@ system.runInterval(() => {
                 const rightX = Math.cos(yawRad);
                 const rightZ = Math.sin(yawRad);
 
-                // Freno aéreo activo (tecla S)
                 if (moveVec.y < -0.3) {
                     targetVx = currentVel.x * 0.35;
                     targetVz = currentVel.z * 0.35;
@@ -364,10 +610,8 @@ system.runInterval(() => {
                         dirZ /= len;
                     }
 
-                    // Velocidades específicas del Linaje
                     let horizontalSpeed = isSprinting ? config.sprintSpeed : config.cruiseSpeed;
-                    
-                    // Impulso extra de picado
+
                     if (pitch > 20) {
                         const diveBoost = Math.min((pitch - 20) / 45, 1) * 0.80;
                         horizontalSpeed += diveBoost;
@@ -383,7 +627,6 @@ system.runInterval(() => {
                 targetVz = currentVel.z * INERTIA_DAMPING;
             }
 
-            // Movimiento vertical según el Linaje:
             let targetVy;
             if (flightData.state === "ASCENDING") {
                 targetVy = isSprinting ? config.sprintAscent : config.normalAscent;
@@ -398,7 +641,6 @@ system.runInterval(() => {
                     targetVy = 0;
                 }
             } else {
-                // DESCENDING / GLIDE / DIVE
                 let targetDescent = config.glideDescent;
                 const isDiving = pitch > 20;
 

@@ -27,3 +27,6 @@ entity.cf:chocobo_white.name=Chocobo Blanco Celestial
 item.spawn_egg.entity.cf:chocobo_white=Huevo de Chocobo Celestial
 entity.cf:chocobo_gold.name=Chocobo Dorado Soberano
 item.spawn_egg.entity.cf:chocobo_gold=Huevo de Chocobo Soberano
+
+item.cf:chocobo_whistle.name=Silbato de Chocobo
+item.cf:chocopedia.name=ChocoWiki / Chocopedia

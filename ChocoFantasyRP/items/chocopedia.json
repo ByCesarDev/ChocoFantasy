@@ -1,0 +1,14 @@
+{
+  "format_version": "1.10",
+  "minecraft:item": {
+    "description": {
+      "identifier": "cf:chocopedia",
+      "category": "items"
+    },
+    "components": {
+      "minecraft:icon": "chocopedia",
+      "minecraft:render_offsets": "miscellaneous"
+    }
+  }
+}
+

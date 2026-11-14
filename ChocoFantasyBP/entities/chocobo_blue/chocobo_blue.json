@@ -5,7 +5,19 @@
       "identifier": "cf:chocobo_blue",
       "is_spawnable": true,
       "is_summonable": true,
-      "is_experimental": false
+      "is_experimental": false,
+      "properties": {
+        "cf:command_state": {
+          "type": "enum",
+          "client_sync": true,
+          "values": [
+            "follow",
+            "sit",
+            "wander"
+          ],
+          "default": "follow"
+        }
+      }
     },
     "components": {
       "minecraft:rideable": {
@@ -256,22 +268,32 @@
           "inventory_size": 1,
           "container_type": "horse"
         },
-        "minecraft:behavior.follow_owner": {
-          "priority": 6,
-          "speed_multiplier": 1.0,
-          "start_distance": 10,
-          "stop_distance": 2
-        },
-        "minecraft:sittable": {},
-        "minecraft:behavior.stay_while_sitting": {
-          "priority": 0
-        },
         "minecraft:nameable": {}
       },
       "minecraft:chocobo_saddled": {
         "minecraft:is_saddled": {},
         "minecraft:can_power_jump": {},
         "minecraft:behavior.player_ride_tamed": {}
+      },
+      "cf:chocobo_follow": {
+        "minecraft:behavior.follow_owner": {
+          "priority": 6,
+          "speed_multiplier": 1.0,
+          "start_distance": 8,
+          "stop_distance": 2
+        }
+      },
+      "cf:chocobo_sit": {
+        "minecraft:is_sitting": {},
+        "minecraft:behavior.stay_while_sitting": {
+          "priority": 0
+        }
+      },
+      "cf:chocobo_wander": {
+        "minecraft:behavior.random_stroll": {
+          "priority": 6,
+          "speed_multiplier": 0.8
+        }
       }
     },
     "events": {
@@ -285,7 +307,8 @@
       "minecraft:on_tame": {
         "add": {
           "component_groups": [
-            "minecraft:chocobo_tamed"
+            "minecraft:chocobo_tamed",
+            "cf:chocobo_follow"
           ]
         },
         "remove": {
@@ -409,6 +432,54 @@
           "component_groups": [
             "cf:chocobo_slow_falling"
           ]
+        }
+      },
+      "cf:command_follow": {
+        "add": {
+          "component_groups": [
+            "cf:chocobo_follow"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "cf:chocobo_sit",
+            "cf:chocobo_wander"
+          ]
+        },
+        "set_property": {
+          "cf:command_state": "follow"
+        }
+      },
+      "cf:command_sit": {
+        "add": {
+          "component_groups": [
+            "cf:chocobo_sit"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "cf:chocobo_follow",
+            "cf:chocobo_wander"
+          ]
+        },
+        "set_property": {
+          "cf:command_state": "sit"
+        }
+      },
+      "cf:command_wander": {
+        "add": {
+          "component_groups": [
+            "cf:chocobo_wander"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "cf:chocobo_follow",
+            "cf:chocobo_sit"
+          ]
+        },
+        "set_property": {
+          "cf:command_state": "wander"
         }
       }
     }
