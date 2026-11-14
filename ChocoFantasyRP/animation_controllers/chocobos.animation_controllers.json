@@ -5,20 +5,24 @@
       "initial_state": "default",
       "states": {
         "default": {
-          "variables": {
-            "move_speed": {
-              "input": "query.ground_speed * query.is_on_ground",
-              "remap_curve": {
-                "0.0": 0,
-                "0.25": 1
-              }
-            }
-          },
-          "animations": [
+          "transitions": [
             {
-              "moving": "variable.move_speed"
+              "moving": "query.is_on_ground && !query.is_sitting && query.property('cf:command_state') != 'sit' && query.ground_speed > 0.01"
             }
           ]
+        },
+        "moving": {
+          "animations": [
+            {
+              "moving": "math.clamp(query.ground_speed * 4.0, 0.0, 1.0)"
+            }
+          ],
+          "transitions": [
+            {
+              "default": "!query.is_on_ground || query.is_sitting || query.property('cf:command_state') == 'sit' || query.ground_speed <= 0.01"
+            }
+          ],
+          "blend_transition": 0.15
         }
       }
     },
@@ -26,11 +30,22 @@
       "initial_state": "default",
       "states": {
         "default": {
-          "animations": [
+          "transitions": [
             {
-              "staticking": "query.is_on_ground && !query.is_sitting && query.ground_speed <= 0.01"
+              "staticking": "query.is_on_ground && !query.is_sitting && query.property('cf:command_state') != 'sit' && query.ground_speed <= 0.01"
             }
           ]
+        },
+        "staticking": {
+          "animations": [
+            "staticking"
+          ],
+          "transitions": [
+            {
+              "default": "!query.is_on_ground || query.is_sitting || query.property('cf:command_state') == 'sit' || query.ground_speed > 0.01"
+            }
+          ],
+          "blend_transition": 0.15
         }
       }
     },
@@ -38,11 +53,22 @@
       "initial_state": "default",
       "states": {
         "default": {
-          "animations": [
+          "transitions": [
             {
-              "flying": "!query.is_on_ground && !query.is_in_water"
+              "flying": "!query.is_on_ground && !query.is_in_water && !query.is_sitting && query.property('cf:command_state') != 'sit'"
             }
           ]
+        },
+        "flying": {
+          "animations": [
+            "flying"
+          ],
+          "transitions": [
+            {
+              "default": "query.is_on_ground || query.is_in_water || query.is_sitting || query.property('cf:command_state') == 'sit'"
+            }
+          ],
+          "blend_transition": 0.15
         }
       }
     },
@@ -50,11 +76,22 @@
       "initial_state": "default",
       "states": {
         "default": {
-          "animations": [
+          "transitions": [
             {
-              "sitting": "query.is_sitting"
+              "sitting": "query.is_sitting || query.property('cf:command_state') == 'sit'"
             }
           ]
+        },
+        "sitting": {
+          "animations": [
+            "sitting"
+          ],
+          "transitions": [
+            {
+              "default": "!query.is_sitting && query.property('cf:command_state') != 'sit'"
+            }
+          ],
+          "blend_transition": 0.15
         }
       }
     }

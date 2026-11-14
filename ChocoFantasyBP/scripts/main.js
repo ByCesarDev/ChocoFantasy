@@ -1,4 +1,4 @@
-import { world, system, InputButton, ButtonState } from "@minecraft/server";
+import { world, system, InputButton, ButtonState, MolangVariableMap } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
 
 // ==========================================
@@ -104,6 +104,7 @@ const COMMAND_LABELS = {
 };
 
 const flightStates = new Map();
+const whistleFlyingChocobos = new Map();
 const playerRidingTracker = new Map();
 
 function getChocoboConfig(mount) {
@@ -201,11 +202,13 @@ world.afterEvents.itemUse.subscribe((event) => {
                 system.runTimeout(() => {
                     if (player.isValid) {
                         player.playSound("note.flute", { pitch: pitches[i], volume: 1.5 });
+                        const molangVars = new MolangVariableMap();
+                        molangVars.setColorRGB("variable.note_color", { red: 1.0, green: 0.85, blue: 0.2 });
                         player.dimension.spawnParticle("minecraft:note_particle", {
                             x: player.location.x,
                             y: player.location.y + 2.1,
                             z: player.location.z
-                        });
+                        }, molangVars);
                     }
                 }, i * 3);
             }
@@ -226,8 +229,12 @@ world.afterEvents.itemUse.subscribe((event) => {
                     const tameable = choco.getComponent("minecraft:tameable");
 
                     if (isTamed && (!tameable?.tamedToPlayerId || tameable.tamedToPlayerId === player.id)) {
+                        const rideable = choco.getComponent("minecraft:rideable");
+                        const riders = rideable?.getRiders?.() ?? [];
+                        if (riders.length > 0) continue; // No mover si alguien lo está montando
+
                         count++;
-                        // Levantar si estaba sentado y poner a seguir
+                        // Levantar si estaba sentado y poner en modo seguimiento sin teletransporte
                         choco.triggerEvent("cf:command_follow");
 
                         choco.dimension.spawnParticle("minecraft:heart_particle", {
@@ -236,15 +243,46 @@ world.afterEvents.itemUse.subscribe((event) => {
                             z: choco.location.z
                         });
 
-                        // Impulso hacia el jinete
                         const dx = player.location.x - choco.location.x;
+                        const dy = player.location.y - choco.location.y;
                         const dz = player.location.z - choco.location.z;
-                        const dist = Math.hypot(dx, dz);
-                        if (dist > 3) {
+                        const hDist = Math.hypot(dx, dz);
+                        const totalDist = Math.hypot(dx, dy, dz);
+
+                        // Si ya está al lado (<= 3 bloques), no necesita desplazamiento
+                        if (totalDist <= 3.0) continue;
+
+                        const isFlyingLineage = choco.typeId === "cf:chocobo_white" || choco.typeId === "cf:chocobo_gold";
+                        const isPlayerElevated = dy > 2.5; // El jugador está arriba en un risco, torre o volando
+                        const isFarAway = hDist > 16;       // Distancia larga sobre terreno irregular
+                        const isAirborne = !choco.isOnGround;
+
+                        // Decisión inteligente: ¿Camina por tierra o alza el vuelo?
+                        const shouldFly = isPlayerElevated || isAirborne || isFarAway || (isFlyingLineage && hDist > 8);
+
+                        if (shouldFly) {
+                            // Alzar el vuelo con aleteo cinemático guiado
+                            choco.triggerEvent("cf:chocobo_start_flying");
+                            choco.applyImpulse({ x: 0, y: 0.35, z: 0 });
+                            try {
+                                choco.dimension.playSound("entity.chocobo.ambient", choco.location, { pitch: 1.2, volume: 1.0 });
+                            } catch {}
+                            whistleFlyingChocobos.set(choco.id, {
+                                choco,
+                                player,
+                                ticksRemaining: 140 // hasta 7 segundos de vuelo cinemático guiado
+                            });
+                        } else {
+                            // Caminar por tierra: follow_owner se encarga del pathfinding sin teletransporte.
+                            if (whistleFlyingChocobos.has(choco.id)) {
+                                whistleFlyingChocobos.delete(choco.id);
+                                choco.triggerEvent("cf:chocobo_stop_flying");
+                            }
+                            // Impulso terrestre sutil hacia adelante para iniciar la caminata inmediatamente
                             choco.applyImpulse({
-                                x: (dx / dist) * 0.45,
-                                y: 0.25,
-                                z: (dz / dist) * 0.45
+                                x: (dx / hDist) * 0.25,
+                                y: 0.05,
+                                z: (dz / hDist) * 0.25
                             });
                         }
                     }
@@ -512,6 +550,54 @@ world.afterEvents.playerButtonInput.subscribe((event) => {
 // 6. CONTROLADOR CINEMÁTICO DE VUELO POR TICK
 // ==========================================
 system.runInterval(() => {
+    // A. Vuelo guiado por silbato (Chocobos respondiendo a la llamada por aire)
+    if (whistleFlyingChocobos.size > 0) {
+        for (const [chocoId, data] of whistleFlyingChocobos.entries()) {
+            try {
+                const { choco, player } = data;
+                if (!choco || !choco.isValid || !player || !player.isValid) {
+                    whistleFlyingChocobos.delete(chocoId);
+                    continue;
+                }
+
+                // Si un jugador montó al Chocobo, devolverle el control total
+                const rideable = choco.getComponent("minecraft:rideable");
+                const riders = rideable?.getRiders?.() ?? [];
+                if (riders.length > 0) {
+                    whistleFlyingChocobos.delete(chocoId);
+                    continue;
+                }
+
+                data.ticksRemaining--;
+
+                const dx = player.location.x - choco.location.x;
+                const dy = (player.location.y + 0.3) - choco.location.y;
+                const dz = player.location.z - choco.location.z;
+                const hDist = Math.hypot(dx, dz);
+                const totalDist = Math.hypot(dx, dy, dz);
+
+                // Aterrizaje suave al llegar junto al jugador o agotar tiempo
+                if ((hDist <= 3.2 && Math.abs(dy) <= 1.8) || data.ticksRemaining <= 0) {
+                    choco.clearVelocity();
+                    choco.triggerEvent("cf:chocobo_stop_flying");
+                    whistleFlyingChocobos.delete(chocoId);
+                    continue;
+                }
+
+                // Vector de sustentación y planeo hacia el dueño
+                const speed = 0.55;
+                const vx = (dx / totalDist) * speed;
+                const vy = Math.max(-0.4, Math.min(0.55, (dy / totalDist) * speed + 0.03));
+                const vz = (dz / totalDist) * speed;
+
+                choco.clearVelocity();
+                choco.applyImpulse({ x: vx, y: vy, z: vz });
+            } catch {
+                whistleFlyingChocobos.delete(chocoId);
+            }
+        }
+    }
+
     if (flightStates.size > 0) {
         const activeMountIds = new Set();
         for (const player of world.getAllPlayers()) {
