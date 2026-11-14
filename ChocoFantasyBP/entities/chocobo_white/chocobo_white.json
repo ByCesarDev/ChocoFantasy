@@ -1,0 +1,409 @@
+{
+  "format_version": "1.21.80",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "cf:chocobo_white",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false
+    },
+    "components": {
+      "minecraft:rideable": {
+        "seat_count": 1,
+        "crouching_skip_interact": true,
+        "family_types": [
+          "player"
+        ],
+        "interact_text": "action.interact.ride.chocobo",
+        "seats": {
+          "position": [
+            0,
+            2.1,
+            -0.2
+          ]
+        },
+        "on_rider_enter_event": "cf:chocobo_mount_start",
+        "on_rider_exit_event": "cf:chocobo_mount_end"
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "on_damage": {
+              "filters": {
+                "with_damage_fatal": true
+              },
+              "event": "minecraft:death_start"
+            }
+          },
+          {
+            "cause": "fall",
+            "deals_damage": "no"
+          },
+          {
+            "cause": "freeze",
+            "deals_damage": "no"
+          }
+        ]
+      },
+      "minecraft:equippable": {
+        "slots": [
+          {
+            "slot": 0,
+            "item": "cf:chocobo_saddle",
+            "accepted_items": [
+              "cf:chocobo_saddle"
+            ],
+            "on_equip": {
+              "event": "minecraft:chocobo_saddled"
+            },
+            "on_unequip": {
+              "event": "minecraft:chocobo_unsaddled"
+            }
+          }
+        ]
+      },
+      "minecraft:type_family": {
+        "family": [
+          "chocobo",
+          "chocobo_white",
+          "white"
+        ]
+      },
+      "minecraft:collision_box": {
+        "width": 2.0,
+        "height": 3.0
+      },
+      "minecraft:health": {
+        "value": 45,
+        "max": 45
+      },
+      "minecraft:hurt_on_condition": {
+        "damage_conditions": [
+          {
+            "filters": {
+              "test": "in_lava",
+              "subject": "self",
+              "operator": "==",
+              "value": true
+            },
+            "cause": "lava",
+            "damage_per_tick": 4
+          }
+        ]
+      },
+      "minecraft:loot": {
+        "table": "loot_tables/entities/chocobo.json"
+      },
+      "minecraft:movement": {
+        "value": 0.42
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 5,
+        "speed_multiplier": 1
+      },
+      "minecraft:navigation.walk": {
+        "can_path_over_water": true,
+        "can_pass_doors": false,
+        "can_open_doors": false,
+        "avoid_water": true
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:horse.jump_strength": {
+        "value": 0
+      },
+      "minecraft:can_climb": {},
+      "minecraft:variable_max_auto_step": {
+        "base_value": 1.0625,
+        "controlled_value": 1.0625,
+        "jump_prevented_value": 1.0625
+      },
+      "minecraft:behavior.float": {
+        "priority": 0
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 1,
+        "look_distance": 6,
+        "angle_of_view_horizontal": 45,
+        "probability": 1
+      },
+      "minecraft:behavior.look_at_entity": {
+        "priority": 3,
+        "look_distance": 8,
+        "angle_of_view_horizontal": 45,
+        "filters": {
+          "test": "is_family",
+          "subject": "other",
+          "value": "mob"
+        }
+      },
+      "minecraft:behavior.stay_while_sitting": {
+        "priority": 0
+      },
+      "minecraft:behavior.panic": {
+        "priority": 3,
+        "speed_multiplier": 1.2
+      },
+      "minecraft:behavior.random_look_around": {
+        "priority": 2
+      },
+      "minecraft:healable": {
+        "items": [
+          {
+            "item": "cf:fruit_life",
+            "heal_amount": 3
+          }
+        ]
+      },
+      "minecraft:physics": {
+        "has_gravity": true,
+        "has_collision": true
+      },
+      "minecraft:pushable": {
+        "is_pushable": true,
+        "is_pushable_by_piston": true
+      }
+    },
+    "component_groups": {
+      "cf:chocobo_ground": {
+        "minecraft:physics": {
+          "has_gravity": true,
+          "has_collision": true
+        },
+        "minecraft:input_ground_controlled": {}
+      },
+      "cf:chocobo_air": {
+        "minecraft:physics": {
+          "has_gravity": false,
+          "has_collision": true
+        }
+      },
+      "cf:chocobo_descend": {
+        "minecraft:physics": {
+          "has_gravity": true,
+          "has_collision": true
+        }
+      },
+      "cf:chocobo_levitation": {
+        "minecraft:spell_effects": {
+          "add_effects": [
+            {
+              "effect": "levitation",
+              "amplifier": 1,
+              "duration": 20,
+              "visible": false
+            }
+          ]
+        }
+      },
+      "cf:chocobo_slow_falling": {
+        "minecraft:spell_effects": {
+          "add_effects": [
+            {
+              "effect": "slow_falling",
+              "amplifier": 1,
+              "duration": 60,
+              "visible": false
+            }
+          ]
+        },
+        "minecraft:timer": {
+          "time": 3,
+          "looping": false,
+          "time_down_event": {
+            "event": "cf:chocobo_stop_slow_falling"
+          }
+        }
+      },
+      "minecraft:death": {
+        "minecraft:transformation": {
+          "into": "cf:chocobo_yellow_1_death",
+          "transformation_sound": "convert_to_drowned",
+          "drop_equipment": true,
+          "delay": {
+            "value": 0
+          }
+        }
+      },
+      "minecraft:chocobo_wild": {
+        "minecraft:tameable": {
+          "probability": 0.33,
+          "tame_items": "cf:reagan",
+          "tame_event": {
+            "event": "minecraft:on_tame",
+            "target": "self"
+          }
+        },
+        "minecraft:behavior.random_look_around_and_sit": {
+          "priority": 12,
+          "min_look_count": 2,
+          "max_look_count": 5,
+          "min_look_time": 80,
+          "max_look_time": 100,
+          "probability": 0.001
+        }
+      },
+      "minecraft:chocobo_tamed": {
+        "minecraft:is_tamed": {},
+        "minecraft:inventory": {
+          "inventory_size": 1,
+          "container_type": "horse"
+        },
+        "minecraft:behavior.follow_owner": {
+          "priority": 6,
+          "speed_multiplier": 1.0,
+          "start_distance": 10,
+          "stop_distance": 2
+        },
+        "minecraft:sittable": {},
+        "minecraft:behavior.stay_while_sitting": {
+          "priority": 0
+        },
+        "minecraft:nameable": {}
+      },
+      "minecraft:chocobo_saddled": {
+        "minecraft:is_saddled": {},
+        "minecraft:can_power_jump": {},
+        "minecraft:behavior.player_ride_tamed": {}
+      }
+    },
+    "events": {
+      "minecraft:entity_spawned": {
+        "add": {
+          "component_groups": [
+            "minecraft:chocobo_wild"
+          ]
+        }
+      },
+      "minecraft:on_tame": {
+        "add": {
+          "component_groups": [
+            "minecraft:chocobo_tamed"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "minecraft:chocobo_wild"
+          ]
+        }
+      },
+      "minecraft:chocobo_saddled": {
+        "add": {
+          "component_groups": [
+            "minecraft:chocobo_saddled",
+            "cf:chocobo_ground"
+          ]
+        }
+      },
+      "minecraft:chocobo_unsaddled": {
+        "remove": {
+          "component_groups": [
+            "minecraft:chocobo_saddled",
+            "cf:chocobo_ground",
+            "cf:chocobo_air",
+            "cf:chocobo_descend"
+          ]
+        }
+      },
+      "minecraft:death_start": {
+        "add": {
+          "component_groups": [
+            "minecraft:death"
+          ]
+        }
+      },
+      "cf:chocobo_mount_start": {
+        "sequence": [
+          {
+            "remove": {
+              "component_groups": [
+                "cf:chocobo_air",
+                "cf:chocobo_descend"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "has_component",
+              "value": "minecraft:is_saddled"
+            },
+            "add": {
+              "component_groups": [
+                "cf:chocobo_ground"
+              ]
+            }
+          }
+        ]
+      },
+      "cf:chocobo_mount_end": {
+        "sequence": [
+          {
+            "remove": {
+              "component_groups": [
+                "cf:chocobo_air",
+                "cf:chocobo_descend"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "has_component",
+              "value": "minecraft:is_saddled"
+            },
+            "add": {
+              "component_groups": [
+                "cf:chocobo_ground"
+              ]
+            }
+          }
+        ]
+      },
+      "cf:chocobo_start_flying": {
+        "add": {
+          "component_groups": [
+            "cf:chocobo_air"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "cf:chocobo_ground",
+            "cf:chocobo_descend"
+          ]
+        }
+      },
+      "cf:chocobo_start_descending": {
+        "add": {
+          "component_groups": [
+            "cf:chocobo_descend"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "cf:chocobo_air",
+            "cf:chocobo_ground"
+          ]
+        }
+      },
+      "cf:chocobo_stop_flying": {
+        "add": {
+          "component_groups": [
+            "cf:chocobo_ground"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "cf:chocobo_air",
+            "cf:chocobo_descend"
+          ]
+        }
+      },
+      "cf:chocobo_stop_slow_falling": {
+        "remove": {
+          "component_groups": [
+            "cf:chocobo_slow_falling"
+          ]
+        }
+      }
+    }
+  }
+}

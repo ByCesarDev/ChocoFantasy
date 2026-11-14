@@ -5,6 +5,24 @@
     "egg_chocobo_yellow": {
       "textures": "textures/items/egg_chocobo_yellow"
     },
+    "egg_chocobo_green": {
+      "textures": "textures/items/egg_chocobo_green"
+    },
+    "egg_chocobo_blue": {
+      "textures": "textures/items/egg_chocobo_blue"
+    },
+    "egg_chocobo_black": {
+      "textures": "textures/items/egg_chocobo_black"
+    },
+    "egg_chocobo_purple": {
+      "textures": "textures/items/egg_chocobo_purple"
+    },
+    "egg_chocobo_white": {
+      "textures": "textures/items/egg_chocobo_white"
+    },
+    "egg_chocobo_gold": {
+      "textures": "textures/items/egg_chocobo_gold"
+    },
     "reagan": {
       "textures": "textures/items/reagan"
     },

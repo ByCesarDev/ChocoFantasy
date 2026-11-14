@@ -1,0 +1,47 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "cf:chocobo_gold",
+      "materials": {
+        "default": "skeleton"
+      },
+      "textures": {
+        "default": "textures/entity/chocobos/male/chocobo_gold",
+        "angry": "textures/entity/chocobos/male/chocobo_gold",
+        "saddle": "textures/entity/chocobos/chocobo_saddle"
+      },
+      "geometry": {
+        "default": "geometry.cf_chocobo",
+        "saddle": "geometry.cf_chocobo_saddle"
+      },
+      "animations": {
+        "staticking": "animation.cf_chocobo.static",
+        "moving": "animation.cf_chocobo.move",
+        "flying": "animation.cf_chocobo.fly",
+        "sitting": "animation.cf_chocobo.sit",
+        "static": "controller.animation.cf_chocobo.static",
+        "move": "controller.animation.cf_chocobo.move",
+        "fly": "controller.animation.cf_chocobo.fly",
+        "sit": "controller.animation.cf_chocobo.sit"
+      },
+      "scripts": {
+        "animate": [
+          "static",
+          "move",
+          "fly",
+          "sit"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.chocobos",
+        {
+          "controller.render.chocobos_saddle": "query.is_saddled"
+        }
+      ],
+      "spawn_egg": {
+        "texture": "egg_chocobo_gold"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+entity.cf:chocobo_green.name=Chocobo Verde Forestal
+item.spawn_egg.entity.cf:chocobo_green=Huevo de Chocobo Forestal
+entity.cf:chocobo_blue.name=Chocobo Azul Ribereño
+item.spawn_egg.entity.cf:chocobo_blue=Huevo de Chocobo Ribereño
+entity.cf:chocobo_black.name=Chocobo Negro de Caverna
+item.spawn_egg.entity.cf:chocobo_black=Huevo de Chocobo de Caverna
+entity.cf:chocobo_purple.name=Chocobo Púrpura Abisal
+item.spawn_egg.entity.cf:chocobo_purple=Huevo de Chocobo Abisal
+entity.cf:chocobo_white.name=Chocobo Blanco Celestial
+item.spawn_egg.entity.cf:chocobo_white=Huevo de Chocobo Celestial
+entity.cf:chocobo_gold.name=Chocobo Dorado Soberano
+item.spawn_egg.entity.cf:chocobo_gold=Huevo de Chocobo Soberano

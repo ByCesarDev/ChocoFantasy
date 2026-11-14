@@ -7,9 +7,9 @@
         "default": "skeleton"
       },
       "textures": {
-        "default": "textures/entity/chocobos/chocobo_yellow_1",
+        "default": "textures/entity/chocobos/male/chocobo_yellow",
         "saddle": "textures/entity/chocobos/chocobo_saddle",
-        "angry": "textures/entity/chocobos/chocobo_yellow_1"
+        "angry": "textures/entity/chocobos/male/chocobo_yellow"
       },
       "geometry": {
         "default": "geometry.cf_chocobo"
